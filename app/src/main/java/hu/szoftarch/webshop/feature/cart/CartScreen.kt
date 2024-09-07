@@ -1,4 +1,4 @@
-package hu.szoftarch.webshop.feature.home
+package hu.szoftarch.webshop.feature.cart
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -13,15 +13,15 @@ import hu.szoftarch.webshop.ui.common.BottomNavBar
 import hu.szoftarch.webshop.ui.common.NavigationItem
 
 @Composable
-fun HomeScreen(navController: NavController) {
+fun CartScreen(navController: NavController) {
     Scaffold(bottomBar = {
-        BottomNavBar(NavigationItem.HOME, navController)
+        BottomNavBar(NavigationItem.CART, navController)
     }) { padding ->
         Column(
             modifier = Modifier.padding(padding),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            Text(text = "Home Screen")
+            Text(text = "Cart Screen")
         }
     }
 }

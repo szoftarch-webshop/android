@@ -5,7 +5,11 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import hu.szoftarch.webshop.feature.camera.CameraScreen
+import hu.szoftarch.webshop.feature.cart.CartScreen
 import hu.szoftarch.webshop.feature.home.HomeScreen
+import hu.szoftarch.webshop.feature.search.SearchScreen
+import hu.szoftarch.webshop.ui.common.NavigationItem
 
 @Composable
 fun NavGraph(
@@ -13,33 +17,30 @@ fun NavGraph(
 ) {
     NavHost(
         navController = navController,
-        startDestination = Screen.Home.route
+        startDestination = NavigationItem.HOME.route
     ) {
         composable(
-            route = Screen.Home.route
+            route = NavigationItem.HOME.route
         ) {
-            HomeScreen()
+            HomeScreen(navController)
         }
 
         composable(
-            route = Screen.Search.route
+            route = NavigationItem.SEARCH.route
         ) {
-            // Search Screen
-            TODO()
+            SearchScreen(navController)
         }
 
         composable(
-            route = Screen.Camera.route
+            route = NavigationItem.CAMERA.route
         ) {
-            // Camera Screen
-            TODO()
+            CameraScreen(navController)
         }
 
         composable(
-            route = Screen.Cart.route
+            route = NavigationItem.CART.route
         ) {
-            // Cart Screen
-            TODO()
+            CartScreen(navController)
         }
     }
 }
