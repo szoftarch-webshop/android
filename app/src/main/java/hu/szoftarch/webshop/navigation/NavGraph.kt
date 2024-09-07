@@ -1,5 +1,6 @@
 package hu.szoftarch.webshop.navigation
 
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -9,38 +10,45 @@ import hu.szoftarch.webshop.feature.camera.CameraScreen
 import hu.szoftarch.webshop.feature.cart.CartScreen
 import hu.szoftarch.webshop.feature.home.HomeScreen
 import hu.szoftarch.webshop.feature.search.SearchScreen
+import hu.szoftarch.webshop.ui.common.BottomNavBar
 import hu.szoftarch.webshop.ui.common.NavigationItem
 
 @Composable
 fun NavGraph(
     navController: NavHostController = rememberNavController()
 ) {
-    NavHost(
-        navController = navController,
-        startDestination = NavigationItem.HOME.route
-    ) {
-        composable(
-            route = NavigationItem.HOME.route
-        ) {
-            HomeScreen(navController)
+    Scaffold(
+        bottomBar = {
+            BottomNavBar(navController)
         }
-
-        composable(
-            route = NavigationItem.SEARCH.route
+    ) { padding ->
+        NavHost(
+            navController = navController,
+            startDestination = NavigationItem.HOME.route
         ) {
-            SearchScreen(navController)
-        }
+            composable(
+                route = NavigationItem.HOME.route
+            ) {
+                HomeScreen(padding)
+            }
 
-        composable(
-            route = NavigationItem.CAMERA.route
-        ) {
-            CameraScreen(navController)
-        }
+            composable(
+                route = NavigationItem.SEARCH.route
+            ) {
+                SearchScreen(padding)
+            }
 
-        composable(
-            route = NavigationItem.CART.route
-        ) {
-            CartScreen(navController)
+            composable(
+                route = NavigationItem.CAMERA.route
+            ) {
+                CameraScreen(padding)
+            }
+
+            composable(
+                route = NavigationItem.CART.route
+            ) {
+                CartScreen(padding)
+            }
         }
     }
 }
