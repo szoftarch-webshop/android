@@ -19,26 +19,20 @@ fun BottomNavBar(navController: NavController) {
 
     NavigationBar {
         NavigationItem.entries.forEach { item ->
-            NavigationBarItem(
-                selected = item.route == selectedRoute,
-                onClick = {
-                    selectedRoute = item.route
-                    navController.navigate(item.route)
-                },
-                label = {
-                    Text(text = item.title)
-                },
-                icon = {
-                    Icon(
-                        imageVector = if (item.route == selectedRoute) {
-                            item.selectedIcon
-                        } else {
-                            item.unselectedIcon
-                        },
-                        contentDescription = item.title
-                    )
-                }
-            )
+            NavigationBarItem(selected = item.route == selectedRoute, onClick = {
+                selectedRoute = item.route
+                navController.navigate(item.route)
+            }, label = {
+                Text(text = item.title)
+            }, icon = {
+                Icon(
+                    imageVector = if (item.route == selectedRoute) {
+                        item.selectedIcon
+                    } else {
+                        item.unselectedIcon
+                    }, contentDescription = item.title
+                )
+            })
         }
     }
 }

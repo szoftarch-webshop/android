@@ -12,8 +12,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun CartScreen(padding: PaddingValues) {
     Column(
-        modifier = Modifier.padding(padding),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        modifier = Modifier.padding(padding), verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Text(text = "Cart Screen")
     }

@@ -17,14 +17,11 @@ import hu.szoftarch.webshop.ui.common.NavigationItem
 fun NavGraph(
     navController: NavHostController = rememberNavController()
 ) {
-    Scaffold(
-        bottomBar = {
-            BottomNavBar(navController)
-        }
-    ) { padding ->
+    Scaffold(bottomBar = {
+        BottomNavBar(navController)
+    }) { padding ->
         NavHost(
-            navController = navController,
-            startDestination = NavigationItem.HOME.route
+            navController = navController, startDestination = NavigationItem.HOME.route
         ) {
             composable(
                 route = NavigationItem.HOME.route

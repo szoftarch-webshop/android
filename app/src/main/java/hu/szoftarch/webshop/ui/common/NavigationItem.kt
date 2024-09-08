@@ -17,7 +17,7 @@ enum class NavigationItem(
     val selectedIcon: ImageVector,
     val unselectedIcon: ImageVector
 ) {
-    HOME (
+    HOME(
         route = "home",
         title = "Home",
         selectedIcon = Icons.Filled.Home,
@@ -43,5 +43,5 @@ enum class NavigationItem(
         title = "Cart",
         selectedIcon = Icons.Filled.ShoppingCart,
         unselectedIcon = Icons.Outlined.ShoppingCart
-    );
+    )
 }
