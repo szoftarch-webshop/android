@@ -73,7 +73,8 @@ dependencies {
     implementation(libs.androidx.material.icons.extended)
     implementation(libs.coil.compose)
     implementation(libs.hilt.android)
-    
+    implementation(libs.retrofit)
+
     kapt(libs.hilt.android.compiler)
 }
 

@@ -35,7 +35,7 @@ import java.net.URL
 fun ProductCard(
     productName: String,
     productPrice: String,
-    productImageURL: URL = URL("https://picsum.photos/700/400"),
+    productImageUrl: URL = URL("https://picsum.photos/700/400"),
     expandedByDefault: Boolean = false,
     expandedContent: @Composable () -> Unit
 ) {
@@ -61,7 +61,7 @@ fun ProductCard(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             AsyncImage(
-                model = productImageURL.toString(),
+                model = productImageUrl.toString(),
                 contentDescription = "Product Image",
                 modifier = Modifier
                     .height(150.dp)
