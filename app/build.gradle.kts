@@ -79,7 +79,7 @@ dependencies {
     implementation(libs.hilt.android)
     implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.retrofit)
-    implementation(libs.jetbrains.kotlinx.coroutines.play.services)
+    implementation(libs.converter.moshi)
 
     kapt(libs.hilt.android.compiler)
 }
