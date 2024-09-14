@@ -11,7 +11,6 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import hu.szoftarch.webshop.feature.camera.CameraScreen
 import hu.szoftarch.webshop.feature.cart.CartScreen
-import hu.szoftarch.webshop.feature.home.HomeScreen
 import hu.szoftarch.webshop.feature.search.SearchScreen
 import hu.szoftarch.webshop.ui.common.BottomNavBar
 import hu.szoftarch.webshop.ui.common.NavigationItem
@@ -26,18 +25,12 @@ fun NavGraph(
         ) { navController.navigate(it) }
     }) { padding ->
         NavHost(
-            navController = navController, startDestination = NavigationItem.HOME.route
+            navController = navController, startDestination = NavigationItem.SEARCH.route
         ) {
-            composable(
-                route = NavigationItem.HOME.route
-            ) {
-                HomeScreen(padding)
-            }
-
             composable(
                 route = NavigationItem.SEARCH.route
             ) {
-                SearchScreen(padding)
+                SearchScreen(modifier = Modifier.padding(padding))
             }
 
             composable(
@@ -49,7 +42,7 @@ fun NavGraph(
             composable(
                 route = NavigationItem.CART.route
             ) {
-                CartScreen(padding)
+                CartScreen(modifier = Modifier.padding(padding))
             }
         }
     }

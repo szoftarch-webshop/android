@@ -16,6 +16,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import hu.szoftarch.webshop.model.data.ProductItem
+import hu.szoftarch.webshop.model.repository.CartRepository
+import hu.szoftarch.webshop.model.repository.ProductRepository
 import kotlinx.coroutines.launch
 import java.io.File
 import java.io.InputStream
@@ -24,31 +27,51 @@ import javax.inject.Inject
 @HiltViewModel
 class CameraViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val serialNumberRecognitionService: SerialNumberRecognitionService
+    private val serialNumberRecognitionService: SerialNumberRecognitionService,
+    private val productRepository: ProductRepository,
+    private val cartRepository: CartRepository
 ) : ViewModel() {
-    var photo by mutableStateOf<Bitmap?>(null)
+    var productItems by mutableStateOf<Map<ProductItem, Int>>(mapOf())
         private set
 
-    var numbers by mutableStateOf<List<String>>(emptyList())
+    var picture by mutableStateOf<Bitmap?>(null)
+        private set
 
     private var photoUri by mutableStateOf<Uri?>(null)
 
-    fun onPhotoTaken() {
+    fun load(launcher: ActivityResultLauncher<Uri>) {
+        if (photoUri != null) {
+            return
+        }
+        photoUri = FileUtils.createImageUri(context)
+        photoUri?.let { launcher.launch(it) }
+    }
+
+    fun onTakePicture() = viewModelScope.launch {
         photoUri?.let {
             val inputStream: InputStream? = context.contentResolver.openInputStream(photoUri!!)
             inputStream?.let {
                 val bitmap = BitmapFactory.decodeStream(it)
-                photo = bitmap.rotateIfRequired(context, photoUri!!)
-                viewModelScope.launch {
-                    numbers = serialNumberRecognitionService.recognizeNumbers(bitmap)
-                }
+                picture = bitmap.rotateIfRequired(context, photoUri!!)
+                val serialNumbers = serialNumberRecognitionService.getSerialNumbers(bitmap)
+                val recognizedProducts = productRepository.getProductsBySerialNumber(serialNumbers)
+                productItems = cartRepository.getProductCount(recognizedProducts)
             }
         }
     }
 
-    fun takePhoto(launcher: ActivityResultLauncher<Uri>) {
-        photoUri = FileUtils.createImageUri(context)
-        photoUri?.let { launcher.launch(it) }
+    fun onAdd(product: ProductItem) = viewModelScope.launch {
+        val cart = cartRepository.addToCart(product)
+        productItems = productItems.toMutableMap().apply {
+            this[product] = cart[product] ?: 0
+        }
+    }
+
+    fun onRemove(product: ProductItem) = viewModelScope.launch {
+        val cart = cartRepository.removeFromCart(product)
+        productItems = productItems.toMutableMap().apply {
+            this[product] = cart[product] ?: 0
+        }
     }
 }
 

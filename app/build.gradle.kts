@@ -1,8 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-
-    id("kotlin-kapt")
+    kotlin("kapt")
     id("com.google.dagger.hilt.android")
 }
 
@@ -79,11 +78,12 @@ dependencies {
     implementation(libs.hilt.android)
     implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.retrofit)
-    implementation(libs.converter.moshi)
+    implementation(libs.moshi)
+    implementation(libs.moshi.kotlin)
     implementation(libs.jetbrains.kotlinx.coroutines.play.services)
 
-
     kapt(libs.hilt.android.compiler)
+    kapt(libs.moshi.kotlin.codegen)
 }
 
 kapt {
