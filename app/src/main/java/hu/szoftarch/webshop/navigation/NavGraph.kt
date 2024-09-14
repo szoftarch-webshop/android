@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import hu.szoftarch.webshop.feature.camera.CameraScreen
 import hu.szoftarch.webshop.feature.cart.CartScreen
@@ -18,7 +19,9 @@ fun NavGraph(
     navController: NavHostController = rememberNavController()
 ) {
     Scaffold(bottomBar = {
-        BottomNavBar(navController)
+        BottomNavBar(
+            navController.currentBackStackEntryAsState().value?.destination?.route
+        ) { navController.navigate(it) }
     }) { padding ->
         NavHost(
             navController = navController, startDestination = NavigationItem.HOME.route
@@ -38,7 +41,7 @@ fun NavGraph(
             composable(
                 route = NavigationItem.CAMERA.route
             ) {
-                CameraScreen(padding)
+                CameraScreen(navController, padding)
             }
 
             composable(
