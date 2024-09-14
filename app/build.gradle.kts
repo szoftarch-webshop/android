@@ -80,6 +80,8 @@ dependencies {
     implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.retrofit)
     implementation(libs.converter.moshi)
+    implementation(libs.jetbrains.kotlinx.coroutines.play.services)
+
 
     kapt(libs.hilt.android.compiler)
 }
