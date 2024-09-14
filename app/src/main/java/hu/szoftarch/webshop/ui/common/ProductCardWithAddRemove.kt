@@ -34,6 +34,10 @@ fun ProductCardWithAddRemove(
 
         Spacer(modifier = Modifier.height(4.dp))
 
+        Text(text = "Products in stock: ${productItem.stock}")
+
+        Spacer(modifier = Modifier.height(4.dp))
+
         Button(
             onClick = {
                 onAdd(productItem)

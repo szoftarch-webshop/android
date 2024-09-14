@@ -30,6 +30,8 @@ object ProductRepositoryMock : ProductRepository {
         )
     )
 
+    override suspend fun getProducts() = productItems.toList()
+
     override suspend fun getProductsBySerialNumber(serialNumbers: Set<String>) =
         productItems.filter { it.serialNumber in serialNumbers }
 }

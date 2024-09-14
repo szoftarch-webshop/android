@@ -30,7 +30,7 @@ fun NavGraph(
             composable(
                 route = NavigationItem.SEARCH.route
             ) {
-                SearchScreen(padding)
+                SearchScreen(modifier = Modifier.padding(padding))
             }
 
             composable(
