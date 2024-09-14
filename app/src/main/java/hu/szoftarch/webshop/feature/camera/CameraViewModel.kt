@@ -33,7 +33,7 @@ class CameraViewModel @Inject constructor(
 
     private var photoUri by mutableStateOf<Uri?>(null)
 
-    fun handleCapturedPhoto() {
+    fun onPhotoTaken() {
         photoUri?.let {
             val inputStream: InputStream? = context.contentResolver.openInputStream(photoUri!!)
             inputStream?.let {

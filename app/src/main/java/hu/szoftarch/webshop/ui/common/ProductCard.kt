@@ -34,7 +34,7 @@ import java.net.URL
 @Composable
 fun ProductCard(
     productName: String,
-    productPrice: String,
+    productPrice: String = "0 HUF",
     productImageUrl: URL = URL("https://picsum.photos/700/400"),
     expandedByDefault: Boolean = false,
     expandedContent: @Composable () -> Unit
