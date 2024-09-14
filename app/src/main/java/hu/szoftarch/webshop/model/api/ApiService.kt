@@ -1,6 +1,6 @@
 package hu.szoftarch.webshop.model.api
 
-import Products
+import hu.szoftarch.webshop.model.data.Products
 import retrofit2.http.GET
 
 interface ApiService {

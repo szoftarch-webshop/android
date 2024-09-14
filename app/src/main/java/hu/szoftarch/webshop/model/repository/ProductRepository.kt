@@ -1,10 +1,8 @@
 package hu.szoftarch.webshop.model.repository
 
-import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ActivityComponent
 import dagger.hilt.components.SingletonComponent
 import hu.szoftarch.webshop.model.data.Product
 import hu.szoftarch.webshop.model.datasource.mock.ProductRepositoryMock
@@ -19,8 +17,7 @@ interface ProductRepository {
 
 @Module
 @InstallIn(SingletonComponent::class)
-abstract class ProductRepositoryModule {
-
-    @Binds
-    abstract fun bindProductRepository(impl: ProductRepositoryMock): ProductRepository
+object ProductRepositoryModule {
+    @Provides
+    fun provideProductRepository(): ProductRepository = ProductRepositoryMock
 }

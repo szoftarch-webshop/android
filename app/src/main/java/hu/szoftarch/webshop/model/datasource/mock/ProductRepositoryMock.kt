@@ -2,10 +2,8 @@ package hu.szoftarch.webshop.model.datasource.mock
 
 import hu.szoftarch.webshop.model.data.Product
 import hu.szoftarch.webshop.model.repository.ProductRepository
-import javax.inject.Inject
 
-
-class ProductRepositoryMock @Inject constructor(): ProductRepository  {
+object ProductRepositoryMock : ProductRepository {
     private val products = mutableListOf(
         Product(
             id = "1",
@@ -18,8 +16,7 @@ class ProductRepositoryMock @Inject constructor(): ProductRepository  {
             stock = 50,
             categoryNames = listOf("1"),
             imageUrl = "http://example.com/laptop.png"
-        ),
-        Product(
+        ), Product(
             id = "2",
             serialNumber = "P002",
             name = "Smartphone",

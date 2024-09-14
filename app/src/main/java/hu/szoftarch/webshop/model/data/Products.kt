@@ -1,6 +1,7 @@
+package hu.szoftarch.webshop.model.data
+
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
-import hu.szoftarch.webshop.model.data.Product
 
 @JsonClass(generateAdapter = true)
 data class Products(
