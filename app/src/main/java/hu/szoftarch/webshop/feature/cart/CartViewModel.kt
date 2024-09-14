@@ -29,8 +29,4 @@ class CartViewModel @Inject constructor(
     fun onRemove(product: ProductItem) = viewModelScope.launch {
         productItems = cartRepository.removeFromCart(product)
     }
-
-    fun onPay() {
-
-    }
 }

@@ -30,33 +30,6 @@ object ProductRepositoryMock : ProductRepository {
         )
     )
 
-    override suspend fun getProductsBySerialNumber(serialNumbers: Iterable<String>) =
+    override suspend fun getProductsBySerialNumber(serialNumbers: Set<String>) =
         productItems.filter { it.serialNumber in serialNumbers }
-
-    override suspend fun getProducts(): List<ProductItem> {
-        return productItems
-    }
-
-    override suspend fun getProductById(id: Int): ProductItem? {
-        return productItems.find { it.id == id }
-    }
-
-    override suspend fun getProductBySerialNumber(serialNumber: String) = productItems.first()
-
-    override suspend fun addProduct(productItem: ProductItem): Boolean {
-        return productItems.add(productItem)
-    }
-
-    override suspend fun updateProduct(productItem: ProductItem): Boolean {
-        val index = productItems.indexOfFirst { it.id == productItem.id }
-        if (index != -1) {
-            productItems[index] = productItem
-            return true
-        }
-        return false
-    }
-
-    override suspend fun deleteProduct(id: Int): Boolean {
-        return productItems.removeIf { it.id == id }
-    }
 }
