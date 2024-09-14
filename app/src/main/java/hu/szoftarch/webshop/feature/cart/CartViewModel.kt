@@ -27,7 +27,7 @@ class CartViewModel @Inject constructor(
             products = cartRepository.cartItems().map {
                 productRepository.getProductById(it)!!
             }
-            
+
             productCount = products.associate {
                 it.id to cartRepository.productCount(it.id)
             }
@@ -50,5 +50,9 @@ class CartViewModel @Inject constructor(
                 this[productId] = cartRepository.productCount(productId)
             }
         }
+    }
+
+    fun pay() {
+        TODO()
     }
 }

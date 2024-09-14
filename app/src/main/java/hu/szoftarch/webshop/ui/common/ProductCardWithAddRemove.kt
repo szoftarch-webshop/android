@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Remove
@@ -45,6 +46,9 @@ fun ProductCardWithAddRemove(
                 contentDescription = "Add to cart",
                 modifier = Modifier.size(24.dp)
             )
+
+            Spacer(modifier = Modifier.width(8.dp))
+
             Text(text = "Add to cart")
         }
 
@@ -61,6 +65,9 @@ fun ProductCardWithAddRemove(
                 contentDescription = "Remove from cart",
                 modifier = Modifier.size(24.dp)
             )
+
+            Spacer(modifier = Modifier.width(8.dp))
+
             Text(text = "Remove from cart")
         }
     }
