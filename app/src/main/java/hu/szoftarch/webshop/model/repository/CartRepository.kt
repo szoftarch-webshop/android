@@ -1,21 +1,13 @@
 package hu.szoftarch.webshop.model.repository
 
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
-import hu.szoftarch.webshop.model.datasource.impl.CartRepositoryImpl
+import hu.szoftarch.webshop.model.data.ProductItem
 
 interface CartRepository {
-    suspend fun addToCart(productId: String)
-    suspend fun removeFromCart(productId: String)
-    suspend fun productCount(productId: String): Int
-    suspend fun cartItems(): Set<String>
-}
+    suspend fun addToCart(product: ProductItem): Map<ProductItem, Int>
 
-@Module
-@InstallIn(SingletonComponent::class)
-object CartRepositoryModule {
-    @Provides
-    fun provideCartRepository(): CartRepository = CartRepositoryImpl
+    suspend fun removeFromCart(product: ProductItem): Map<ProductItem, Int>
+
+    suspend fun getProductsInCart(): Map<ProductItem, Int>
+
+    suspend fun getProductCount(products: Iterable<ProductItem>): Map<ProductItem, Int>
 }

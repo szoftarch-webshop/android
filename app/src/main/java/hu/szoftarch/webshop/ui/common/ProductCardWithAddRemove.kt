@@ -15,28 +15,28 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import hu.szoftarch.webshop.model.data.Product
+import hu.szoftarch.webshop.model.data.ProductItem
 
 @Composable
 fun ProductCardWithAddRemove(
-    product: Product,
+    productItem: ProductItem,
+    productCount: Int,
     expandedByDefault: Boolean = false,
-    getProductCount: (String) -> Int?,
-    onAdd: () -> Unit,
-    onRemove: () -> Unit
+    onAdd: (ProductItem) -> Unit,
+    onRemove: (ProductItem) -> Unit
 ) {
-    ProductCard(product, expandedByDefault) {
-        Text(text = product.description)
+    ProductCard(productItem, expandedByDefault) {
+        Text(text = productItem.description)
 
         Spacer(modifier = Modifier.height(4.dp))
 
-        Text(text = "Products in cart: ${getProductCount(product.id)}")
+        Text(text = "Products in cart: $productCount")
 
         Spacer(modifier = Modifier.height(4.dp))
 
         Button(
             onClick = {
-                onAdd()
+                onAdd(productItem)
             }, modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp)
@@ -54,7 +54,7 @@ fun ProductCardWithAddRemove(
 
         Button(
             onClick = {
-                onRemove()
+                onRemove(productItem)
             },
             modifier = Modifier
                 .fillMaxWidth()

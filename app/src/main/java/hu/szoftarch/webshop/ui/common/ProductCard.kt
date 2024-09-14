@@ -31,11 +31,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
-import hu.szoftarch.webshop.model.data.Product
+import hu.szoftarch.webshop.model.data.ProductItem
 
 @Composable
 fun ProductCard(
-    product: Product,
+    productItem: ProductItem,
     expandedByDefault: Boolean = false,
     expandedContent: @Composable () -> Unit
 ) {
@@ -61,7 +61,7 @@ fun ProductCard(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             AsyncImage(
-                model = product.imageUrl,
+                model = productItem.imageUrl,
                 contentDescription = null,
                 modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Inside
@@ -69,15 +69,15 @@ fun ProductCard(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            Text(text = product.name, fontSize = 20.sp, fontWeight = FontWeight.Bold)
+            Text(text = productItem.name, fontSize = 20.sp, fontWeight = FontWeight.Bold)
 
             Spacer(modifier = Modifier.height(4.dp))
 
-            Text(text = product.priceInUsd(), fontSize = 18.sp)
+            Text(text = productItem.priceHuf(), fontSize = 18.sp)
 
             Spacer(modifier = Modifier.height(4.dp))
 
-            Text(text = "(${product.serialNumber})", fontSize = 10.sp, color = Color.LightGray)
+            Text(text = "(${productItem.serialNumber})", fontSize = 10.sp, color = Color.LightGray)
 
             if (expanded) {
                 Spacer(modifier = Modifier.height(8.dp))
@@ -90,7 +90,7 @@ fun ProductCard(
 @Preview(showBackground = true, uiMode = android.content.res.Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun PreviewProductCard() {
-    ProductCard(product = Product(),
+    ProductCard(productItem = ProductItem(),
         expandedByDefault = false,
         expandedContent = {
             Text(text = "This is the product description")

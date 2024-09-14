@@ -1,22 +1,24 @@
 package hu.szoftarch.webshop.model.datasource.impl
 
+import hu.szoftarch.webshop.model.data.ProductItem
 import hu.szoftarch.webshop.model.repository.CartRepository
+import kotlin.math.max
 
 object CartRepositoryImpl : CartRepository {
-    private val cartItems = mutableMapOf<String, Int>()
+    private val cartItems = sortedMapOf<ProductItem, Int>()
 
-    override suspend fun addToCart(productId: String) {
-        cartItems[productId] = cartItems.getOrDefault(productId, defaultValue = 0) + 1
+    override suspend fun addToCart(product: ProductItem): Map<ProductItem, Int> {
+        cartItems[product] = (cartItems[product] ?: 0) + 1
+        return cartItems.toMap()
     }
 
-    override suspend fun removeFromCart(productId: String) {
-        if (cartItems.getOrDefault(productId, defaultValue = 0) == 0) {
-            return
-        }
-        cartItems[productId] = cartItems.getOrDefault(productId, defaultValue = 0) - 1
+    override suspend fun removeFromCart(product: ProductItem): Map<ProductItem, Int> {
+        cartItems[product] = max((cartItems[product] ?: 0) - 1, 0)
+        return cartItems.toMap()
     }
 
-    override suspend fun productCount(productId: String) = cartItems.getOrPut(productId) { 0 }
+    override suspend fun getProductsInCart() = cartItems.filter { (_, count) -> count != 0 }
 
-    override suspend fun cartItems() = cartItems.filter { it.value > 0 }.keys
+    override suspend fun getProductCount(products: Iterable<ProductItem>) =
+        products.associateWith { (cartItems[it] ?: 0) }
 }

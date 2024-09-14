@@ -16,7 +16,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
-import hu.szoftarch.webshop.model.data.Product
+import hu.szoftarch.webshop.model.data.ProductItem
 import hu.szoftarch.webshop.model.repository.CartRepository
 import hu.szoftarch.webshop.model.repository.ProductRepository
 import kotlinx.coroutines.launch
@@ -27,43 +27,19 @@ import javax.inject.Inject
 @HiltViewModel
 class CameraViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val textRecognitionService: TextRecognitionService,
+    private val serialNumberRecognitionService: SerialNumberRecognitionService,
     private val productRepository: ProductRepository,
     private val cartRepository: CartRepository
 ) : ViewModel() {
-    var photo by mutableStateOf<Bitmap?>(null)
+    var productItems by mutableStateOf<Map<ProductItem, Int>>(mapOf())
         private set
 
-    var products by mutableStateOf<List<Product>>(emptyList())
-        private set
-
-    var productCount by mutableStateOf<Map<String, Int>>(emptyMap())
+    var picture by mutableStateOf<Bitmap?>(null)
         private set
 
     private var photoUri by mutableStateOf<Uri?>(null)
 
-    fun onPhotoTaken() {
-        photoUri?.let {
-            val inputStream: InputStream? = context.contentResolver.openInputStream(photoUri!!)
-            inputStream?.let {
-                val bitmap = BitmapFactory.decodeStream(it)
-                photo = bitmap.rotateIfRequired(context, photoUri!!)
-                viewModelScope.launch {
-                    val serialNumbers = textRecognitionService.getSerialNumbers(bitmap)
-
-                    products = serialNumbers.mapNotNull { serialNumber ->
-                        productRepository.getProductBySerialNumber(serialNumber)
-                    }
-
-                    productCount = products.associate { product ->
-                        product.id to cartRepository.productCount(product.id)
-                    }
-                }
-            }
-        }
-    }
-
-    fun takePhoto(launcher: ActivityResultLauncher<Uri>) {
+    fun load(launcher: ActivityResultLauncher<Uri>) {
         if (photoUri != null) {
             return
         }
@@ -71,21 +47,30 @@ class CameraViewModel @Inject constructor(
         photoUri?.let { launcher.launch(it) }
     }
 
-    fun addToCart(productId: String) {
-        viewModelScope.launch {
-            cartRepository.addToCart(productId)
-            productCount = productCount.toMutableMap().apply {
-                this[productId] = cartRepository.productCount(productId)
+    fun onTakePicture() = viewModelScope.launch {
+        photoUri?.let {
+            val inputStream: InputStream? = context.contentResolver.openInputStream(photoUri!!)
+            inputStream?.let {
+                val bitmap = BitmapFactory.decodeStream(it)
+                picture = bitmap.rotateIfRequired(context, photoUri!!)
+                val serialNumbers = serialNumberRecognitionService.getSerialNumbers(bitmap)
+                val recognizedProducts = productRepository.getProductsBySerialNumber(serialNumbers)
+                productItems = cartRepository.getProductCount(recognizedProducts)
             }
         }
     }
 
-    fun removeFromCart(productId: String) {
-        viewModelScope.launch {
-            cartRepository.removeFromCart(productId)
-            productCount = productCount.toMutableMap().apply {
-                this[productId] = cartRepository.productCount(productId)
-            }
+    fun onAdd(product: ProductItem) = viewModelScope.launch {
+        val cart = cartRepository.addToCart(product)
+        productItems = productItems.toMutableMap().apply {
+            this[product] = cart[product] ?: 0
+        }
+    }
+
+    fun onRemove(product: ProductItem) = viewModelScope.launch {
+        val cart = cartRepository.removeFromCart(product)
+        productItems = productItems.toMutableMap().apply {
+            this[product] = cart[product] ?: 0
         }
     }
 }

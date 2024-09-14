@@ -1,24 +1,19 @@
 package hu.szoftarch.webshop.model.repository
 
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
-import hu.szoftarch.webshop.model.data.Product
-import hu.szoftarch.webshop.model.datasource.mock.ProductRepositoryMock
+import hu.szoftarch.webshop.model.data.ProductItem
 
 interface ProductRepository {
-    suspend fun getProducts(): List<Product>
-    suspend fun getProductById(productId: String): Product?
-    suspend fun getProductBySerialNumber(serialNumber: String): Product?
-    suspend fun addProduct(product: Product): Boolean
-    suspend fun updateProduct(product: Product): Boolean
-    suspend fun deleteProduct(productId: String): Boolean
-}
+    suspend fun getProductsBySerialNumber(serialNumbers: Iterable<String>): List<ProductItem>
 
-@Module
-@InstallIn(SingletonComponent::class)
-object ProductRepositoryModule {
-    @Provides
-    fun provideProductRepository(): ProductRepository = ProductRepositoryMock
+    suspend fun getProducts(): List<ProductItem>
+
+    suspend fun getProductById(id: Int): ProductItem?
+
+    suspend fun getProductBySerialNumber(serialNumber: String): ProductItem?
+
+    suspend fun addProduct(productItem: ProductItem): Boolean
+
+    suspend fun updateProduct(productItem: ProductItem): Boolean
+
+    suspend fun deleteProduct(id: Int): Boolean
 }

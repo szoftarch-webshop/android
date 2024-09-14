@@ -27,24 +27,24 @@ import hu.szoftarch.webshop.ui.common.ProductCardWithAddRemove
 @Composable
 fun CameraScreen(
     modifier: Modifier = Modifier,
-    viewModel: CameraViewModel = hiltViewModel(),
+    cameraViewModel: CameraViewModel = hiltViewModel(),
     navController: NavController
 ) {
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) {
         if (it) {
-            viewModel.onPhotoTaken()
+            cameraViewModel.onTakePicture()
         } else {
             navController.popBackStack()
         }
     }
 
     LaunchedEffect(Unit) {
-        viewModel.takePhoto(launcher)
+        cameraViewModel.load(launcher)
     }
 
     LazyColumn(modifier = modifier) {
         item {
-            viewModel.photo?.let {
+            cameraViewModel.picture?.let {
                 PaddedImage(
                     bitmap = it.asImageBitmap(), modifier = Modifier.padding(16.dp)
                 )
@@ -55,12 +55,12 @@ fun CameraScreen(
             )
         }
 
-        items(viewModel.products) { product ->
+        items(cameraViewModel.productItems.toList()) { (product, count) ->
             ProductCardWithAddRemove(
-                product,
-                getProductCount = { viewModel.productCount[product.id] },
-                onAdd = { viewModel.addToCart(product.id) },
-                onRemove = { viewModel.removeFromCart(product.id) }
+                productItem = product,
+                productCount = count,
+                onAdd = cameraViewModel::onAdd,
+                onRemove = cameraViewModel::onRemove
             )
         }
     }
