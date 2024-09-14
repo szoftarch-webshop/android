@@ -24,6 +24,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -68,15 +69,15 @@ fun ProductCard(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            Text(
-                text = product.name, fontSize = 20.sp, fontWeight = FontWeight.Bold
-            )
+            Text(text = product.name, fontSize = 20.sp, fontWeight = FontWeight.Bold)
 
             Spacer(modifier = Modifier.height(4.dp))
 
-            Text(
-                text = product.priceInUsd(), fontSize = 18.sp
-            )
+            Text(text = product.priceInUsd(), fontSize = 18.sp)
+
+            Spacer(modifier = Modifier.height(4.dp))
+
+            Text(text = "(${product.serialNumber})", fontSize = 10.sp, color = Color.LightGray)
 
             if (expanded) {
                 Spacer(modifier = Modifier.height(8.dp))

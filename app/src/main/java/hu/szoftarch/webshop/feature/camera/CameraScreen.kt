@@ -4,24 +4,15 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Remove
-import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
@@ -31,7 +22,7 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import hu.szoftarch.webshop.ui.common.ProductCard
+import hu.szoftarch.webshop.ui.common.ProductCardWithAddRemove
 
 @Composable
 fun CameraScreen(
@@ -65,45 +56,12 @@ fun CameraScreen(
         }
 
         items(viewModel.products) { product ->
-            ProductCard(product) {
-                Text(text = product.description)
-
-                Spacer(modifier = Modifier.height(4.dp))
-
-                Text(text = "Products in cart: ${viewModel.productCount[product.id]}")
-
-                Spacer(modifier = Modifier.height(4.dp))
-
-                Button(
-                    onClick = {
-                        viewModel.addToCart(product.id)
-                    }, modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.Add,
-                        contentDescription = "Add to cart",
-                        modifier = Modifier.size(24.dp)
-                    )
-                    Text(text = "Add to cart")
-                }
-
-                Button(
-                    onClick = {
-                        viewModel.removeFromCart(product.id)
-                    }, modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 16.dp, start = 16.dp, end = 16.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.Remove,
-                        contentDescription = "Remove from cart",
-                        modifier = Modifier.size(24.dp)
-                    )
-                    Text(text = "Remove from cart")
-                }
-            }
+            ProductCardWithAddRemove(
+                product,
+                getProductCount = { viewModel.productCount[product.id] },
+                onAdd = { viewModel.addToCart(product.id) },
+                onRemove = { viewModel.removeFromCart(product.id) }
+            )
         }
     }
 }

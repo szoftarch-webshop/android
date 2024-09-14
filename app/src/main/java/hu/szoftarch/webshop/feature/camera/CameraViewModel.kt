@@ -50,15 +50,14 @@ class CameraViewModel @Inject constructor(
                 photo = bitmap.rotateIfRequired(context, photoUri!!)
                 viewModelScope.launch {
                     val serialNumbers = textRecognitionService.getSerialNumbers(bitmap)
+
                     products = serialNumbers.mapNotNull { serialNumber ->
                         productRepository.getProductBySerialNumber(serialNumber)
                     }
-                    val newProductCounts = mutableMapOf<String, Int>().apply {
-                        products.forEach { product ->
-                            this[product.id] = cartRepository.productCount(product.id)
-                        }
+
+                    productCount = products.associate { product ->
+                        product.id to cartRepository.productCount(product.id)
                     }
-                    productCount = newProductCounts
                 }
             }
         }

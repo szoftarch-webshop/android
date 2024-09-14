@@ -49,7 +49,7 @@ fun NavGraph(
             composable(
                 route = NavigationItem.CART.route
             ) {
-                CartScreen(padding)
+                CartScreen(modifier = Modifier.padding(padding))
             }
         }
     }
