@@ -16,6 +16,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import hu.szoftarch.webshop.model.data.Product
+import hu.szoftarch.webshop.model.repository.CartRepository
+import hu.szoftarch.webshop.model.repository.ProductRepository
 import kotlinx.coroutines.launch
 import java.io.File
 import java.io.InputStream
@@ -24,12 +27,18 @@ import javax.inject.Inject
 @HiltViewModel
 class CameraViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val serialNumberRecognitionService: SerialNumberRecognitionService
+    private val textRecognitionService: TextRecognitionService,
+    private val productRepository: ProductRepository,
+    private val cartRepository: CartRepository
 ) : ViewModel() {
     var photo by mutableStateOf<Bitmap?>(null)
         private set
 
-    var numbers by mutableStateOf<List<String>>(emptyList())
+    var products by mutableStateOf<List<Product>>(emptyList())
+        private set
+
+    var productCount by mutableStateOf<Map<String, Int>>(emptyMap())
+        private set
 
     private var photoUri by mutableStateOf<Uri?>(null)
 
@@ -40,15 +49,45 @@ class CameraViewModel @Inject constructor(
                 val bitmap = BitmapFactory.decodeStream(it)
                 photo = bitmap.rotateIfRequired(context, photoUri!!)
                 viewModelScope.launch {
-                    numbers = serialNumberRecognitionService.recognizeNumbers(bitmap)
+                    val serialNumbers = textRecognitionService.getSerialNumbers(bitmap)
+                    products = serialNumbers.mapNotNull { serialNumber ->
+                        productRepository.getProductBySerialNumber(serialNumber)
+                    }
+                    val newProductCounts = mutableMapOf<String, Int>().apply {
+                        products.forEach { product ->
+                            this[product.id] = cartRepository.productCount(product.id)
+                        }
+                    }
+                    productCount = newProductCounts
                 }
             }
         }
     }
 
     fun takePhoto(launcher: ActivityResultLauncher<Uri>) {
+        if (photoUri != null) {
+            return
+        }
         photoUri = FileUtils.createImageUri(context)
         photoUri?.let { launcher.launch(it) }
+    }
+
+    fun addToCart(productId: String) {
+        viewModelScope.launch {
+            cartRepository.addToCart(productId)
+            productCount = productCount.toMutableMap().apply {
+                this[productId] = cartRepository.productCount(productId)
+            }
+        }
+    }
+
+    fun removeFromCart(productId: String) {
+        viewModelScope.launch {
+            cartRepository.removeFromCart(productId)
+            productCount = productCount.toMutableMap().apply {
+                this[productId] = cartRepository.productCount(productId)
+            }
+        }
     }
 }
 

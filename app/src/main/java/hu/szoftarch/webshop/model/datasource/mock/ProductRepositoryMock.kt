@@ -15,7 +15,7 @@ object ProductRepositoryMock : ProductRepository {
             price = 1200.0,
             stock = 50,
             categoryNames = listOf("1"),
-            imageUrl = "http://example.com/laptop.png"
+            imageUrl = "https://picsum.photos/700/500"
         ), Product(
             id = "2",
             serialNumber = "P002",
@@ -26,7 +26,7 @@ object ProductRepositoryMock : ProductRepository {
             price = 800.0,
             stock = 100,
             categoryNames = listOf("2"),
-            imageUrl = "http://example.com/smartphone.png"
+            imageUrl = "https://picsum.photos/700/400"
         )
     )
 
@@ -37,6 +37,8 @@ object ProductRepositoryMock : ProductRepository {
     override suspend fun getProductById(productId: String): Product? {
         return products.find { it.id == productId }
     }
+
+    override suspend fun getProductBySerialNumber(serialNumber: String) = products.first()
 
     override suspend fun addProduct(product: Product): Boolean {
         return products.add(product)

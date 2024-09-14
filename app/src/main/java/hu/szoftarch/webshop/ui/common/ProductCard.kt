@@ -3,6 +3,7 @@ package hu.szoftarch.webshop.ui.common
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -29,13 +30,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
-import java.net.URL
+import hu.szoftarch.webshop.model.data.Product
 
 @Composable
 fun ProductCard(
-    productName: String,
-    productPrice: String = "0 HUF",
-    productImageUrl: URL = URL("https://picsum.photos/700/400"),
+    product: Product,
     expandedByDefault: Boolean = false,
     expandedContent: @Composable () -> Unit
 ) {
@@ -61,24 +60,22 @@ fun ProductCard(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             AsyncImage(
-                model = productImageUrl.toString(),
-                contentDescription = "Product Image",
-                modifier = Modifier
-                    .height(150.dp)
-                    .fillMaxWidth(),
+                model = product.imageUrl,
+                contentDescription = null,
+                modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Inside
             )
 
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = productName, fontSize = 20.sp, fontWeight = FontWeight.Bold
+                text = product.name, fontSize = 20.sp, fontWeight = FontWeight.Bold
             )
 
             Spacer(modifier = Modifier.height(4.dp))
 
             Text(
-                text = productPrice, fontSize = 18.sp
+                text = product.priceInUsd(), fontSize = 18.sp
             )
 
             if (expanded) {
@@ -92,9 +89,8 @@ fun ProductCard(
 @Preview(showBackground = true, uiMode = android.content.res.Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun PreviewProductCard() {
-    ProductCard(productName = "Product Name",
-        productPrice = "1500 HUF",
-        expandedByDefault = true,
+    ProductCard(product = Product(),
+        expandedByDefault = false,
         expandedContent = {
             Text(text = "This is the product description")
 

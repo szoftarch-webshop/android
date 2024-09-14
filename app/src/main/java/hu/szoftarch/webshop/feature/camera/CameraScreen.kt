@@ -16,6 +16,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -63,15 +64,19 @@ fun CameraScreen(
             )
         }
 
-        items(viewModel.numbers) {
-            ProductCard(productName = it) {
-                Text(text = "This is the product description")
+        items(viewModel.products) { product ->
+            ProductCard(product) {
+                Text(text = product.description)
 
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(4.dp))
+
+                Text(text = "Products in cart: ${viewModel.productCount[product.id]}")
+
+                Spacer(modifier = Modifier.height(4.dp))
 
                 Button(
                     onClick = {
-                        TODO()
+                        viewModel.addToCart(product.id)
                     }, modifier = Modifier
                         .fillMaxWidth()
                         .padding(16.dp)
@@ -81,8 +86,22 @@ fun CameraScreen(
                         contentDescription = "Add to cart",
                         modifier = Modifier.size(24.dp)
                     )
-
                     Text(text = "Add to cart")
+                }
+
+                Button(
+                    onClick = {
+                        viewModel.removeFromCart(product.id)
+                    }, modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 16.dp, start = 16.dp, end = 16.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Remove,
+                        contentDescription = "Remove from cart",
+                        modifier = Modifier.size(24.dp)
+                    )
+                    Text(text = "Remove from cart")
                 }
             }
         }
@@ -101,7 +120,7 @@ fun PaddedImage(
     ) {
         Image(
             bitmap = bitmap,
-            contentDescription = "Top Image",
+            contentDescription = null,
             modifier = Modifier
                 .fillMaxSize()
                 .clip(RoundedCornerShape(16.dp))

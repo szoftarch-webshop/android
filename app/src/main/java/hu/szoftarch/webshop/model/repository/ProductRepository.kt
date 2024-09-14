@@ -10,6 +10,7 @@ import hu.szoftarch.webshop.model.datasource.mock.ProductRepositoryMock
 interface ProductRepository {
     suspend fun getProducts(): List<Product>
     suspend fun getProductById(productId: String): Product?
+    suspend fun getProductBySerialNumber(serialNumber: String): Product?
     suspend fun addProduct(product: Product): Boolean
     suspend fun updateProduct(product: Product): Boolean
     suspend fun deleteProduct(productId: String): Boolean
