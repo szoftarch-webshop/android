@@ -1,7 +1,7 @@
 package hu.szoftarch.webshop.model.datasource.mock
 
+import hu.szoftarch.webshop.model.data.FilterOptions
 import hu.szoftarch.webshop.model.data.ProductItem
-import hu.szoftarch.webshop.model.repository.FilterOptions
 import hu.szoftarch.webshop.model.repository.ProductRepository
 
 object ProductRepositoryMock : ProductRepository {

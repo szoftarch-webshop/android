@@ -40,7 +40,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import hu.szoftarch.webshop.model.data.CategoryItem
-import hu.szoftarch.webshop.model.repository.FilterOptions
+import hu.szoftarch.webshop.model.data.FilterOptions
 import hu.szoftarch.webshop.ui.common.ProductCardWithAddRemove
 import kotlinx.coroutines.launch
 
