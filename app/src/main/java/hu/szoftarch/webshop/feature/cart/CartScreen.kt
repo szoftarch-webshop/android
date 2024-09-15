@@ -1,6 +1,5 @@
 package hu.szoftarch.webshop.feature.cart
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,13 +12,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Payment
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
@@ -29,11 +27,9 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -50,12 +46,11 @@ fun CartScreen(
     }
 
     Box(
-        modifier = modifier.fillMaxSize()
+        modifier = modifier
     ) {
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(bottom = 96.dp)
         ) {
             items(cartViewModel.productItems.toList()) { (product, count) ->
                 ProductCardWithAddRemove(
@@ -66,33 +61,44 @@ fun CartScreen(
                     onRemove = cartViewModel::onRemove
                 )
             }
+
+            item {
+                Spacer(modifier = Modifier.height(80.dp))
+            }
         }
 
-        CheckoutBox(modifier = Modifier.align(Alignment.BottomEnd))
+        CheckoutButton(
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.BottomCenter)
+                .padding(
+                    bottom = 16.dp,
+                    start = 32.dp,
+                    end = 32.dp
+                )
+        )
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun CheckoutBox(
+private fun CheckoutButton(
     modifier: Modifier = Modifier
 ) {
     val sheetState = rememberModalBottomSheetState()
-    val scope = rememberCoroutineScope()
     var showBottomSheet by remember { mutableStateOf(false) }
 
-    Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(16.dp)
-            .shadow(2.dp)
-            .background(MaterialTheme.colorScheme.surfaceContainer, RoundedCornerShape(12.dp))
+    FloatingActionButton(
+        modifier = modifier,
+        onClick = {
+            showBottomSheet = true
+        }
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
-            horizontalArrangement = Arrangement.SpaceEvenly,
+            horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
@@ -101,19 +107,14 @@ private fun CheckoutBox(
                 fontWeight = FontWeight.Bold
             )
 
-            Button(
-                modifier = Modifier.weight(1.5f),
-                onClick = { showBottomSheet = true }
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.Payment,
-                    contentDescription = null
-                )
+            Icon(
+                imageVector = Icons.Filled.Payment,
+                contentDescription = null
+            )
 
-                Spacer(modifier = Modifier.width(16.dp))
+            Spacer(modifier = Modifier.width(8.dp))
 
-                Text(text = "Check Out")
-            }
+            Text(text = "Check Out")
         }
     }
 
