@@ -1,7 +1,10 @@
 package hu.szoftarch.webshop.ui.common
 
 import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,7 +14,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
@@ -41,22 +46,49 @@ fun ProductCard(
         mutableStateOf(expandedByDefault)
     }
 
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp)
-            .animateContentSize(),
+    Card(modifier = Modifier
+        .fillMaxWidth()
+        .padding(16.dp)
+        .animateContentSize(),
         shape = RoundedCornerShape(12.dp),
         onClick = {
             expanded = !expanded
-        }
-    ) {
+        }) {
         Column(
             modifier = Modifier
                 .padding(16.dp)
                 .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp),
+                contentAlignment = Alignment.CenterStart
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        text = productItem.name,
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+
+                Icon(
+                    imageVector = if (expanded) Icons.Filled.KeyboardArrowDown else Icons.AutoMirrored.Filled.KeyboardArrowLeft,
+                    contentDescription = if (expanded) "Collapse" else "Expand",
+                    modifier = Modifier
+                        .size(24.dp)
+                        .align(Alignment.CenterEnd)
+                )
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
             AsyncImage(
                 model = productItem.imageUrl,
                 contentDescription = null,
@@ -66,11 +98,7 @@ fun ProductCard(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            Text(text = productItem.name, fontSize = 20.sp, fontWeight = FontWeight.Bold)
-
-            Spacer(modifier = Modifier.height(4.dp))
-
-            Text(text = productItem.priceHuf(), fontSize = 18.sp)
+            Text(text = productItem.priceHuf, fontSize = 18.sp)
 
             Spacer(modifier = Modifier.height(4.dp))
 
@@ -87,27 +115,25 @@ fun ProductCard(
 @Preview(showBackground = true, uiMode = android.content.res.Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun PreviewProductCard() {
-    ProductCard(productItem = ProductItem(),
-        expandedByDefault = false,
-        expandedContent = {
-            Text(text = "This is the product description")
+    ProductCard(productItem = ProductItem(), expandedByDefault = false, expandedContent = {
+        Text(text = "This is the product description")
 
-            Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(8.dp))
 
-            Button(
-                onClick = {
-                    TODO()
-                }, modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.Add,
-                    contentDescription = "Add to cart",
-                    modifier = Modifier.size(24.dp)
-                )
-                Spacer(modifier = Modifier.width(16.dp))
-                Text(text = "Add to cart")
-            }
-        })
+        Button(
+            onClick = {
+                TODO()
+            }, modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Filled.Add,
+                contentDescription = "Add to cart",
+                modifier = Modifier.size(24.dp)
+            )
+            Spacer(modifier = Modifier.width(16.dp))
+            Text(text = "Add to cart")
+        }
+    })
 }

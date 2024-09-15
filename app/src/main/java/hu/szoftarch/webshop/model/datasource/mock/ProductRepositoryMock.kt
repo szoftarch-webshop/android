@@ -1,5 +1,6 @@
 package hu.szoftarch.webshop.model.datasource.mock
 
+import FilterOptions
 import hu.szoftarch.webshop.model.data.ProductItem
 import hu.szoftarch.webshop.model.repository.ProductRepository
 
@@ -31,6 +32,9 @@ object ProductRepositoryMock : ProductRepository {
     )
 
     override suspend fun getProducts() = productItems.toList()
+
+    override suspend fun getProducts(filterOptions: FilterOptions) =
+        productItems.filter(filterOptions::matches)
 
     override suspend fun getProductsBySerialNumber(serialNumbers: Set<String>) =
         productItems.filter { it.serialNumber in serialNumbers }

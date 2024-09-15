@@ -1,5 +1,6 @@
 package hu.szoftarch.webshop.feature.search
 
+import FilterOptions
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -20,6 +21,9 @@ class SearchViewModel @Inject constructor(
     var productItems by mutableStateOf<Map<ProductItem, Int>>(mapOf())
         private set
 
+    var filterOptions by mutableStateOf(FilterOptions())
+        private set
+
     fun load() = viewModelScope.launch {
         val products = productRepository.getProducts()
         productItems = cartRepository.getProductCount(products)
@@ -37,5 +41,11 @@ class SearchViewModel @Inject constructor(
         productItems = productItems.toMutableMap().apply {
             this[product] = cart[product] ?: 0
         }
+    }
+
+    fun onApplyFilter(newFilterOptions: FilterOptions) = viewModelScope.launch {
+        filterOptions = newFilterOptions
+        val products = productRepository.getProducts(newFilterOptions)
+        productItems = cartRepository.getProductCount(products)
     }
 }
