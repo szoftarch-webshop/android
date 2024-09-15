@@ -1,6 +1,5 @@
 package hu.szoftarch.webshop.feature.search
 
-import FilterOptions
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -41,6 +40,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import hu.szoftarch.webshop.model.data.CategoryItem
+import hu.szoftarch.webshop.model.repository.FilterOptions
 import hu.szoftarch.webshop.ui.common.ProductCardWithAddRemove
 import kotlinx.coroutines.launch
 
@@ -99,7 +99,7 @@ fun SearchScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FilterBottomSheetContent(
+private fun FilterBottomSheetContent(
     filterOptions: FilterOptions,
     categories: List<CategoryItem>,
     onDismiss: () -> Unit,
@@ -113,6 +113,7 @@ fun FilterBottomSheetContent(
         Text(text = "Filter Options")
 
         var nameOrSerialNumber by remember { mutableStateOf(filterOptions.nameOrSerialNumber) }
+        var material by remember { mutableStateOf(filterOptions.material) }
         var selectedCategoryId by remember { mutableIntStateOf(filterOptions.categoryId) }
 
         OutlinedTextField(
@@ -123,6 +124,16 @@ fun FilterBottomSheetContent(
         )
 
         Spacer(modifier = Modifier.height(16.dp))
+
+        OutlinedTextField(
+            value = material,
+            onValueChange = { material = it },
+            label = { Text("Material") },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
 
         var expanded by remember { mutableStateOf(false) }
         val selectedCategory = categories.firstOrNull { it.id == selectedCategoryId }
@@ -172,7 +183,9 @@ fun FilterBottomSheetContent(
 
             Button(onClick = {
                 val newFilterOptions = FilterOptions(
-                    nameOrSerialNumber = nameOrSerialNumber, categoryId = selectedCategoryId
+                    nameOrSerialNumber = nameOrSerialNumber,
+                    material = material,
+                    categoryId = selectedCategoryId
                 )
                 onApplyFilter(newFilterOptions)
                 onDismiss()

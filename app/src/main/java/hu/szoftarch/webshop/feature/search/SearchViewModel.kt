@@ -1,6 +1,5 @@
 package hu.szoftarch.webshop.feature.search
 
-import FilterOptions
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -11,6 +10,7 @@ import hu.szoftarch.webshop.model.data.CategoryItem
 import hu.szoftarch.webshop.model.data.ProductItem
 import hu.szoftarch.webshop.model.repository.CartRepository
 import hu.szoftarch.webshop.model.repository.CategoryRepository
+import hu.szoftarch.webshop.model.repository.FilterOptions
 import hu.szoftarch.webshop.model.repository.ProductRepository
 import kotlinx.coroutines.launch
 import javax.inject.Inject

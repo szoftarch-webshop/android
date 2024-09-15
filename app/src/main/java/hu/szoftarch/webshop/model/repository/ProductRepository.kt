@@ -1,6 +1,5 @@
 package hu.szoftarch.webshop.model.repository
 
-import FilterOptions
 import hu.szoftarch.webshop.model.data.ProductItem
 
 interface ProductRepository {
