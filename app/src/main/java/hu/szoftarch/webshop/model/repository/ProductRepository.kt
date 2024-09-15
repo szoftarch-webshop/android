@@ -5,5 +5,7 @@ import hu.szoftarch.webshop.model.data.ProductItem
 interface ProductRepository {
     suspend fun getProducts(): List<ProductItem>
 
+    suspend fun getProducts(filterOptions: FilterOptions): List<ProductItem>
+
     suspend fun getProductsBySerialNumber(serialNumbers: Set<String>): List<ProductItem>
 }

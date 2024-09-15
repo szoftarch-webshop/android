@@ -1,6 +1,7 @@
 package hu.szoftarch.webshop.model.datasource.mock
 
 import hu.szoftarch.webshop.model.data.ProductItem
+import hu.szoftarch.webshop.model.repository.FilterOptions
 import hu.szoftarch.webshop.model.repository.ProductRepository
 
 object ProductRepositoryMock : ProductRepository {
@@ -14,7 +15,7 @@ object ProductRepositoryMock : ProductRepository {
             description = "High-performance laptop",
             price = 1200,
             stock = 50,
-            categoryNames = listOf("1"),
+            categoryIds = listOf(1),
             imageUrl = "https://picsum.photos/700/500"
         ), ProductItem(
             id = 2,
@@ -25,12 +26,15 @@ object ProductRepositoryMock : ProductRepository {
             description = "Latest model smartphone",
             price = 800,
             stock = 100,
-            categoryNames = listOf("2"),
+            categoryIds = listOf(2),
             imageUrl = "https://picsum.photos/700/400"
         )
     )
 
     override suspend fun getProducts() = productItems.toList()
+
+    override suspend fun getProducts(filterOptions: FilterOptions) =
+        productItems.filter(filterOptions::matches)
 
     override suspend fun getProductsBySerialNumber(serialNumbers: Set<String>) =
         productItems.filter { it.serialNumber in serialNumbers }

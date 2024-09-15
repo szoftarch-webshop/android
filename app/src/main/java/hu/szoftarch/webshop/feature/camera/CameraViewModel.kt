@@ -1,6 +1,8 @@
 package hu.szoftarch.webshop.feature.camera
 
+import android.Manifest
 import android.content.Context
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
@@ -10,6 +12,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.exifinterface.media.ExifInterface
 import androidx.lifecycle.ViewModel
@@ -31,28 +34,43 @@ class CameraViewModel @Inject constructor(
     private val productRepository: ProductRepository,
     private val cartRepository: CartRepository
 ) : ViewModel() {
+    var hasCameraPermission by mutableStateOf(
+        ContextCompat.checkSelfPermission(
+            context,
+            Manifest.permission.CAMERA
+        ) == PackageManager.PERMISSION_GRANTED
+    )
+        private set
+
     var productItems by mutableStateOf<Map<ProductItem, Int>>(mapOf())
         private set
 
     var picture by mutableStateOf<Bitmap?>(null)
         private set
 
-    private var photoUri by mutableStateOf<Uri?>(null)
+    private var pictureUri by mutableStateOf<Uri?>(null)
+
+    fun onPermissionResult(isGranted: Boolean, launcher: ActivityResultLauncher<Uri>) {
+        hasCameraPermission = isGranted
+        if (isGranted) {
+            load(launcher)
+        }
+    }
 
     fun load(launcher: ActivityResultLauncher<Uri>) {
-        if (photoUri != null) {
+        if (pictureUri != null) {
             return
         }
-        photoUri = FileUtils.createImageUri(context)
-        photoUri?.let { launcher.launch(it) }
+        pictureUri = FileUtils.createImageUri(context)
+        pictureUri?.let { launcher.launch(it) }
     }
 
     fun onTakePicture() = viewModelScope.launch {
-        photoUri?.let {
-            val inputStream: InputStream? = context.contentResolver.openInputStream(photoUri!!)
+        pictureUri?.let {
+            val inputStream: InputStream? = context.contentResolver.openInputStream(pictureUri!!)
             inputStream?.let {
                 val bitmap = BitmapFactory.decodeStream(it)
-                picture = bitmap.rotateIfRequired(context, photoUri!!)
+                picture = bitmap.rotateIfRequired(context, pictureUri!!)
                 val serialNumbers = serialNumberRecognitionService.getSerialNumbers(bitmap)
                 val recognizedProducts = productRepository.getProductsBySerialNumber(serialNumbers)
                 productItems = cartRepository.getProductCount(recognizedProducts)
