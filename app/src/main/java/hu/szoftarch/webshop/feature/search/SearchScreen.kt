@@ -23,9 +23,9 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -97,7 +97,6 @@ fun SearchScreen(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun FilterBottomSheetContent(
     filterOptions: FilterOptions,
@@ -108,90 +107,138 @@ private fun FilterBottomSheetContent(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp)
+            .padding(8.dp)
     ) {
-        Text(text = "Filter Options")
-
         var nameOrSerialNumber by remember { mutableStateOf(filterOptions.nameOrSerialNumber) }
         var material by remember { mutableStateOf(filterOptions.material) }
         var selectedCategoryId by remember { mutableIntStateOf(filterOptions.categoryId) }
 
-        OutlinedTextField(
-            value = nameOrSerialNumber,
-            onValueChange = { nameOrSerialNumber = it },
-            label = { Text("Name or Serial Number") },
-            modifier = Modifier.fillMaxWidth()
+        TextOption(
+            selectedText = filterOptions.nameOrSerialNumber,
+            labelText = "Name or Serial Number",
+            onValueChange = { nameOrSerialNumber = it }
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        OutlinedTextField(
-            value = material,
-            onValueChange = { material = it },
-            label = { Text("Material") },
-            modifier = Modifier.fillMaxWidth()
+        TextOption(
+            selectedText = filterOptions.material,
+            labelText = "Material",
+            onValueChange = { material = it }
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
+        CategorySelector(
+            categories = categories,
+            selectedCategoryId = selectedCategoryId,
+            onCategorySelected = { selectedCategoryId = it }
+        )
 
-        var expanded by remember { mutableStateOf(false) }
-        val selectedCategory = categories.firstOrNull { it.id == selectedCategoryId }
+        Spacer(modifier = Modifier.height(16.dp))
 
-        ExposedDropdownMenuBox(
-            expanded = expanded,
-            onExpandedChange = { expanded = !expanded }
-        ) {
-
-            OutlinedTextField(
-                modifier = Modifier
-                    .menuAnchor(MenuAnchorType.PrimaryNotEditable)
-                    .fillMaxWidth(),
-                readOnly = true,
-                value = selectedCategory?.name ?: "",
-                onValueChange = {},
-                label = { Text("Category") },
-                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-                colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors()
+        ActionButtons(
+            onDismiss = onDismiss,
+            onApplyFilter = onApplyFilter,
+            filterOptions = FilterOptions(
+                nameOrSerialNumber = nameOrSerialNumber,
+                material = material,
+                categoryId = selectedCategoryId
             )
+        )
+    }
+}
 
-            ExposedDropdownMenu(
-                expanded = expanded,
-                onDismissRequest = { expanded = false }
-            ) {
-                categories.forEach { category ->
-                    DropdownMenuItem(
-                        text = { Text(text = category.name) },
-                        onClick = {
-                            selectedCategoryId = category.id
-                            expanded = false
-                        },
-                        contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
-                    )
-                }
-            }
-        }
+@Composable
+private fun TextOption(
+    selectedText: String,
+    labelText: String,
+    onValueChange: (String) -> Unit
+) {
+    var text by remember { mutableStateOf(selectedText) }
 
-        Spacer(modifier = Modifier.height(16.dp))
+    OutlinedTextField(
+        value = text,
+        singleLine = true,
+        onValueChange = {
+            text = it
+            onValueChange(it)
+        },
+        label = { Text(labelText) },
+        modifier = Modifier.fillMaxWidth()
+    )
+}
 
-        Row(
-            modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun CategorySelector(
+    categories: List<CategoryItem>,
+    selectedCategoryId: Int,
+    onCategorySelected: (Int) -> Unit
+) {
+    var expanded by remember { mutableStateOf(false) }
+    val selectedCategory = categories.firstOrNull { it.id == selectedCategoryId }
+
+    ExposedDropdownMenuBox(
+        expanded = expanded,
+        onExpandedChange = { expanded = !expanded }
+    ) {
+
+        OutlinedTextField(
+            modifier = Modifier
+                .menuAnchor(MenuAnchorType.PrimaryNotEditable)
+                .fillMaxWidth(),
+            readOnly = true,
+            value = selectedCategory?.name ?: "",
+            onValueChange = {},
+            label = { Text("Category") },
+            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+            colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors()
+        )
+
+        ExposedDropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false }
         ) {
-            TextButton(onClick = onDismiss, content = { Text("Cancel") })
-
-            Spacer(modifier = Modifier.width(8.dp))
-
-            Button(onClick = {
-                val newFilterOptions = FilterOptions(
-                    nameOrSerialNumber = nameOrSerialNumber,
-                    material = material,
-                    categoryId = selectedCategoryId
+            categories.forEach { category ->
+                DropdownMenuItem(
+                    text = { Text(text = category.name) },
+                    onClick = {
+                        onCategorySelected(category.id)
+                        expanded = false
+                    },
+                    contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
                 )
-                onApplyFilter(newFilterOptions)
-                onDismiss()
-            }) {
-                Text("Apply")
             }
         }
+    }
+}
+
+@Composable
+private fun ActionButtons(
+    onDismiss: () -> Unit,
+    onApplyFilter: (FilterOptions) -> Unit,
+    filterOptions: FilterOptions
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceEvenly
+    ) {
+        OutlinedButton(
+            modifier = Modifier.weight(1f),
+            onClick = onDismiss,
+            content = { Text("Cancel") }
+        )
+
+        Spacer(modifier = Modifier.width(8.dp))
+
+        Button(
+            modifier = Modifier.weight(1f),
+            onClick = {
+                onApplyFilter(filterOptions)
+                onDismiss()
+            },
+            content = { Text("Apply") }
+        )
     }
 }
