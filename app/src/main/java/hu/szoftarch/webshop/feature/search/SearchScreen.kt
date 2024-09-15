@@ -42,6 +42,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import hu.szoftarch.webshop.model.data.CategoryItem
 import hu.szoftarch.webshop.model.data.FilterOptions
 import hu.szoftarch.webshop.ui.common.ProductCardWithAddRemove
+import hu.szoftarch.webshop.ui.common.TextInput
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -113,7 +114,7 @@ private fun FilterBottomSheetContent(
         var material by remember { mutableStateOf(filterOptions.material) }
         var selectedCategoryId by remember { mutableIntStateOf(filterOptions.categoryId) }
 
-        TextOption(
+        TextInput(
             selectedText = filterOptions.nameOrSerialNumber,
             labelText = "Name or Serial Number",
             onValueChange = { nameOrSerialNumber = it }
@@ -121,7 +122,7 @@ private fun FilterBottomSheetContent(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        TextOption(
+        TextInput(
             selectedText = filterOptions.material,
             labelText = "Material",
             onValueChange = { material = it }
@@ -147,26 +148,6 @@ private fun FilterBottomSheetContent(
             )
         )
     }
-}
-
-@Composable
-private fun TextOption(
-    selectedText: String,
-    labelText: String,
-    onValueChange: (String) -> Unit
-) {
-    var text by remember { mutableStateOf(selectedText) }
-
-    OutlinedTextField(
-        value = text,
-        singleLine = true,
-        onValueChange = {
-            text = it
-            onValueChange(it)
-        },
-        label = { Text(labelText) },
-        modifier = Modifier.fillMaxWidth()
-    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
