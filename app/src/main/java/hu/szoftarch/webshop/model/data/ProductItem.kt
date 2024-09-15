@@ -12,7 +12,7 @@ data class ProductItem(
     val description: String = "No description",
     val price: Int = 0,
     val stock: Int = 0,
-    val categoryNames: List<String> = emptyList(),
+    val categoryIds: List<Int> = emptyList(),
     val imageUrl: String = "https://picsum.photos/700/400"
 ) : Comparable<ProductItem> {
     val priceHuf = "$price HUF"

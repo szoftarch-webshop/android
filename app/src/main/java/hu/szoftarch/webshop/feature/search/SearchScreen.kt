@@ -16,9 +16,13 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material3.Button
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -27,6 +31,7 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -35,6 +40,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import hu.szoftarch.webshop.model.data.CategoryItem
 import hu.szoftarch.webshop.ui.common.ProductCardWithAddRemove
 import kotlinx.coroutines.launch
 
@@ -77,23 +83,25 @@ fun SearchScreen(
         ModalBottomSheet(
             onDismissRequest = { showBottomSheet = false }, sheetState = sheetState
         ) {
-            FilterBottomSheetContent(
-                filterOptions = searchViewModel.filterOptions,
+            FilterBottomSheetContent(filterOptions = searchViewModel.filterOptions,
+                categories = searchViewModel.availableCategories,
+                onApplyFilter = searchViewModel::onApplyFilter,
                 onDismiss = {
                     scope.launch { sheetState.hide() }.invokeOnCompletion {
                         if (!sheetState.isVisible) {
                             showBottomSheet = false
                         }
                     }
-                }, onApplyFilter = searchViewModel::onApplyFilter
-            )
+                })
         }
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FilterBottomSheetContent(
     filterOptions: FilterOptions,
+    categories: List<CategoryItem>,
     onDismiss: () -> Unit,
     onApplyFilter: (FilterOptions) -> Unit
 ) {
@@ -105,28 +113,66 @@ fun FilterBottomSheetContent(
         Text(text = "Filter Options")
 
         var nameOrSerialNumber by remember { mutableStateOf(filterOptions.nameOrSerialNumber) }
+        var selectedCategoryId by remember { mutableIntStateOf(filterOptions.categoryId) }
 
         OutlinedTextField(
             value = nameOrSerialNumber,
             onValueChange = { nameOrSerialNumber = it },
-            label = { Text("Filter by name or serial number") },
+            label = { Text("Name or Serial Number") },
             modifier = Modifier.fillMaxWidth()
         )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        var expanded by remember { mutableStateOf(false) }
+        val selectedCategory = categories.firstOrNull { it.id == selectedCategoryId }
+
+        ExposedDropdownMenuBox(
+            expanded = expanded,
+            onExpandedChange = { expanded = !expanded }
+        ) {
+
+            OutlinedTextField(
+                modifier = Modifier
+                    .menuAnchor(MenuAnchorType.PrimaryNotEditable)
+                    .fillMaxWidth(),
+                readOnly = true,
+                value = selectedCategory?.name ?: "",
+                onValueChange = {},
+                label = { Text("Category") },
+                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+                colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors()
+            )
+
+            ExposedDropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false }
+            ) {
+                categories.forEach { category ->
+                    DropdownMenuItem(
+                        text = { Text(text = category.name) },
+                        onClick = {
+                            selectedCategoryId = category.id
+                            expanded = false
+                        },
+                        contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
+                    )
+                }
+            }
+        }
 
         Spacer(modifier = Modifier.height(16.dp))
 
         Row(
             modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End
         ) {
-            TextButton(onClick = onDismiss) {
-                Text("Cancel")
-            }
+            TextButton(onClick = onDismiss, content = { Text("Cancel") })
 
             Spacer(modifier = Modifier.width(8.dp))
 
             Button(onClick = {
                 val newFilterOptions = FilterOptions(
-                    nameOrSerialNumber = nameOrSerialNumber
+                    nameOrSerialNumber = nameOrSerialNumber, categoryId = selectedCategoryId
                 )
                 onApplyFilter(newFilterOptions)
                 onDismiss()

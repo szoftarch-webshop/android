@@ -15,7 +15,7 @@ object ProductRepositoryMock : ProductRepository {
             description = "High-performance laptop",
             price = 1200,
             stock = 50,
-            categoryNames = listOf("1"),
+            categoryIds = listOf(1),
             imageUrl = "https://picsum.photos/700/500"
         ), ProductItem(
             id = 2,
@@ -26,7 +26,7 @@ object ProductRepositoryMock : ProductRepository {
             description = "Latest model smartphone",
             price = 800,
             stock = 100,
-            categoryNames = listOf("2"),
+            categoryIds = listOf(2),
             imageUrl = "https://picsum.photos/700/400"
         )
     )

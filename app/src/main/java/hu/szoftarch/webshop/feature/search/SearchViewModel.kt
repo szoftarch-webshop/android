@@ -7,18 +7,24 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import hu.szoftarch.webshop.model.data.CategoryItem
 import hu.szoftarch.webshop.model.data.ProductItem
 import hu.szoftarch.webshop.model.repository.CartRepository
+import hu.szoftarch.webshop.model.repository.CategoryRepository
 import hu.szoftarch.webshop.model.repository.ProductRepository
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class SearchViewModel @Inject constructor(
-    private val productRepository: ProductRepository,
-    private val cartRepository: CartRepository
+    private val cartRepository: CartRepository,
+    private val categoryRepository: CategoryRepository,
+    private val productRepository: ProductRepository
 ) : ViewModel() {
     var productItems by mutableStateOf<Map<ProductItem, Int>>(mapOf())
+        private set
+
+    var availableCategories by mutableStateOf<List<CategoryItem>>(listOf())
         private set
 
     var filterOptions by mutableStateOf(FilterOptions())
@@ -27,6 +33,7 @@ class SearchViewModel @Inject constructor(
     fun load() = viewModelScope.launch {
         val products = productRepository.getProducts()
         productItems = cartRepository.getProductCount(products)
+        availableCategories = categoryRepository.getCategories()
     }
 
     fun onAdd(product: ProductItem) = viewModelScope.launch {
@@ -45,7 +52,7 @@ class SearchViewModel @Inject constructor(
 
     fun onApplyFilter(newFilterOptions: FilterOptions) = viewModelScope.launch {
         filterOptions = newFilterOptions
-        val products = productRepository.getProducts(newFilterOptions)
+        val products = productRepository.getProducts(filterOptions)
         productItems = cartRepository.getProductCount(products)
     }
 }
