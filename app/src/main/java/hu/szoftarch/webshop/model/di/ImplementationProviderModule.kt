@@ -10,6 +10,8 @@ import hu.szoftarch.webshop.model.datasource.mock.ProductRepositoryMock
 import hu.szoftarch.webshop.model.repository.CartRepository
 import hu.szoftarch.webshop.model.repository.CategoryRepository
 import hu.szoftarch.webshop.model.repository.ProductRepository
+import hu.szoftarch.webshop.model.service.PaymentService
+import hu.szoftarch.webshop.model.service.PaymentServiceMock
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -22,4 +24,7 @@ object ImplementationProviderModule {
 
     @Provides
     fun categoryRepository(): CategoryRepository = CategoryRepositoryMock
+
+    @Provides
+    fun paymentService(): PaymentService = PaymentServiceMock
 }
