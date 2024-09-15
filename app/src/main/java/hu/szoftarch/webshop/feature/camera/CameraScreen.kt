@@ -67,7 +67,7 @@ fun CameraScreen(
 
 
 @Composable
-fun HandleCameraPermission(
+private fun HandleCameraPermission(
     cameraViewModel: CameraViewModel,
     pictureLauncher: ActivityResultLauncher<Uri>,
     onPermissionGranted: () -> Unit
@@ -96,7 +96,7 @@ fun HandleCameraPermission(
 }
 
 @Composable
-fun PermissionDeniedView(onRequestPermission: () -> Unit) {
+private fun PermissionDeniedView(onRequestPermission: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -118,7 +118,7 @@ fun PermissionDeniedView(onRequestPermission: () -> Unit) {
 }
 
 @Composable
-fun CameraContent(
+private fun CameraContent(
     modifier: Modifier = Modifier,
     cameraViewModel: CameraViewModel
 ) {
@@ -149,7 +149,7 @@ fun CameraContent(
 
 
 @Composable
-fun PaddedImage(
+private fun PaddedImage(
     bitmap: ImageBitmap,
     modifier: Modifier = Modifier,
 ) {
