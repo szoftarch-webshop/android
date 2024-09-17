@@ -72,7 +72,7 @@ private fun ProductRetrievalOptions.matches(product: ProductItem): Boolean {
     val materialOk = material.isBlank()
             || product.material.trim().lowercase().startsWith(material)
 
-    val categoryOk = categoryId in product.categoryIds
+    val categoryOk = categoryId == -1 || categoryId in product.categoryIds
 
     return nameOrSerialNumberOk && materialOk && categoryOk
 }

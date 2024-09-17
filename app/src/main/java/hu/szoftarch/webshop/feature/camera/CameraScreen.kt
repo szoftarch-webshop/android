@@ -143,8 +143,8 @@ private fun CameraContent(
                 ProductCardWithAddRemove(
                     productItem = product,
                     productCount = count,
-                    onAdd = cameraViewModel::onAdd,
-                    onRemove = cameraViewModel::onRemove
+                    onAdd = { cameraViewModel.onAdd(product.id) },
+                    onRemove = { cameraViewModel.onRemove(product.id) }
                 )
             }
         } else {
