@@ -17,7 +17,8 @@ object ProductRepositoryMock : ProductRepository {
             stock = 50,
             categoryIds = listOf(1),
             imageUrl = "https://picsum.photos/700/500"
-        ), ProductItem(
+        ),
+        ProductItem(
             id = 2,
             serialNumber = "0987654321",
             name = "Smartphone",
@@ -28,6 +29,18 @@ object ProductRepositoryMock : ProductRepository {
             stock = 100,
             categoryIds = listOf(2),
             imageUrl = "https://picsum.photos/700/400"
+        ),
+        ProductItem(
+            id = 5,
+            serialNumber = "5432167890",
+            name = "Something else",
+            weight = 1.0,
+            material = "Wood",
+            description = "No idea what this is",
+            price = 15000,
+            stock = 10,
+            categoryIds = listOf(1, 2, 3),
+            imageUrl = "https://picsum.photos/400/400"
         )
     )
 
