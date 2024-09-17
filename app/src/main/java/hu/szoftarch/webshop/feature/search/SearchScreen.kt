@@ -99,7 +99,7 @@ fun SearchScreen(
         ) {
             FilterBottomSheetContent(options = searchViewModel.options,
                 categories = searchViewModel.availableCategories,
-                onApplyFilter = searchViewModel::onApplyFilter,
+                onApplyFilter = searchViewModel::onApplyOptions,
                 onDismiss = {
                     scope.launch { sheetState.hide() }.invokeOnCompletion {
                         if (!sheetState.isVisible) {
