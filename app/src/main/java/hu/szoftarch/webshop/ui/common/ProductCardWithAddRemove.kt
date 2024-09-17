@@ -39,6 +39,12 @@ fun ProductCardWithAddRemove(
 
         Spacer(modifier = Modifier.height(4.dp))
 
+        Text(text = "Weight: ${productItem.weight} kg")
+
+        Spacer(modifier = Modifier.height(4.dp))
+
+        Text(text = "Material: ${productItem.material}")
+
         Button(
             onClick = {
                 onAdd(productItem)
