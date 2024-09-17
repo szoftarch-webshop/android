@@ -1,6 +1,4 @@
-package hu.szoftarch.webshop.model.repository
-
-import hu.szoftarch.webshop.model.data.ProductItem
+package hu.szoftarch.webshop.model.data
 
 data class FilterOptions(
     val nameOrSerialNumber: String = "",

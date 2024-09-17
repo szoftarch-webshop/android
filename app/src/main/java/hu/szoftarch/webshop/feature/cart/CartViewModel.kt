@@ -8,12 +8,14 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import hu.szoftarch.webshop.model.data.ProductItem
 import hu.szoftarch.webshop.model.repository.CartRepository
+import hu.szoftarch.webshop.model.service.PaymentService
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class CartViewModel @Inject constructor(
-    private val cartRepository: CartRepository
+    private val cartRepository: CartRepository,
+    private val paymentService: PaymentService
 ) : ViewModel() {
     var productItems by mutableStateOf<Map<ProductItem, Int>>(mapOf())
         private set

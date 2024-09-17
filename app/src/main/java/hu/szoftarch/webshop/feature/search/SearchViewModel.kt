@@ -7,10 +7,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import hu.szoftarch.webshop.model.data.CategoryItem
+import hu.szoftarch.webshop.model.data.FilterOptions
 import hu.szoftarch.webshop.model.data.ProductItem
 import hu.szoftarch.webshop.model.repository.CartRepository
 import hu.szoftarch.webshop.model.repository.CategoryRepository
-import hu.szoftarch.webshop.model.repository.FilterOptions
 import hu.szoftarch.webshop.model.repository.ProductRepository
 import kotlinx.coroutines.launch
 import javax.inject.Inject

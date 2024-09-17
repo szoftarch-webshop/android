@@ -6,6 +6,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -126,7 +127,8 @@ private fun CameraContent(
         item {
             cameraViewModel.picture?.let {
                 PaddedImage(
-                    bitmap = it.asImageBitmap(), modifier = Modifier.padding(16.dp)
+                    modifier = Modifier.padding(16.dp),
+                    bitmap = it.asImageBitmap()
                 )
             }
 
@@ -136,13 +138,34 @@ private fun CameraContent(
             )
         }
 
-        items(cameraViewModel.productItems.toList()) { (product, count) ->
-            ProductCardWithAddRemove(
-                productItem = product,
-                productCount = count,
-                onAdd = cameraViewModel::onAdd,
-                onRemove = cameraViewModel::onRemove
-            )
+        if (cameraViewModel.productItems.isNotEmpty()) {
+            items(cameraViewModel.productItems.toList()) { (product, count) ->
+                ProductCardWithAddRemove(
+                    productItem = product,
+                    productCount = count,
+                    onAdd = cameraViewModel::onAdd,
+                    onRemove = cameraViewModel::onRemove
+                )
+            }
+        } else {
+            item {
+                Box(
+                    modifier = modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 32.dp)
+                        .background(
+                            MaterialTheme.colorScheme.surfaceContainer,
+                            RoundedCornerShape(12.dp)
+                        )
+                ) {
+                    Text(
+                        modifier = Modifier
+                            .padding(24.dp)
+                            .align(Alignment.Center),
+                        text = "No products found"
+                    )
+                }
+            }
         }
     }
 }
@@ -156,7 +179,7 @@ private fun PaddedImage(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .heightIn(min = 200.dp)
+            .heightIn(min = 150.dp)
     ) {
         Image(
             bitmap = bitmap,

@@ -1,10 +1,10 @@
-package hu.szoftarch.webshop.model.datasource.impl
+package hu.szoftarch.webshop.model.datasource.mock
 
 import hu.szoftarch.webshop.model.data.ProductItem
 import hu.szoftarch.webshop.model.repository.CartRepository
 import kotlin.math.max
 
-object CartRepositoryImpl : CartRepository {
+object CartRepositoryMock : CartRepository {
     private val cartItems = sortedMapOf<ProductItem, Int>()
 
     override suspend fun addToCart(product: ProductItem): Map<ProductItem, Int> {
