@@ -9,5 +9,5 @@ interface CartRepository {
 
     suspend fun getProductsInCart(): CartContent
 
-    suspend fun getProductCount(products: List<Int>): Map<Int, Int>
+    suspend fun getProductCount(productIds: List<Int>): Map<Int, Int>
 }

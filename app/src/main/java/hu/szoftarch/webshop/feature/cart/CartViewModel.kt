@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import hu.szoftarch.webshop.model.data.CartContent
 import hu.szoftarch.webshop.model.data.ProductItem
 import hu.szoftarch.webshop.model.repository.CartRepository
 import hu.szoftarch.webshop.model.repository.ProductRepository
@@ -23,17 +24,20 @@ class CartViewModel @Inject constructor(
         private set
 
     fun load() = viewModelScope.launch {
-        productItems = cartRepository.getProductsInCart().products
-            .map { (id, count) -> productRepository.getProductById(id) to count }.toMap()
+        setProductItems(cartRepository.getProductsInCart())
     }
 
     fun onAdd(productId: Int) = viewModelScope.launch {
-        productItems = cartRepository.addToCart(productId).products
-            .map { (id, count) -> productRepository.getProductById(id) to count }.toMap()
+        setProductItems(cartRepository.addToCart(productId))
     }
 
     fun onRemove(productId: Int) = viewModelScope.launch {
-        productItems = cartRepository.removeFromCart(productId).products
-            .map { (id, count) -> productRepository.getProductById(id) to count }.toMap()
+        setProductItems(cartRepository.removeFromCart(productId))
+    }
+
+    private suspend fun setProductItems(cartContent: CartContent) {
+        productItems =
+            cartContent.products.map { (id, count) -> productRepository.getProductById(id) to count }
+                .toMap()
     }
 }
