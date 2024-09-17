@@ -65,6 +65,8 @@ fun SearchScreen(
                 ProductCardWithAddRemove(
                     productItem = product,
                     productCount = count,
+                    expandedByDefault = searchViewModel.productCardState[product.id] ?: false,
+                    onExpansionChange = { searchViewModel.onChangeProductCardState(product.id) },
                     onAdd = { searchViewModel.onAdd(product.id) },
                     onRemove = { searchViewModel.onRemove(product.id) }
                 )

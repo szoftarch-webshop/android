@@ -3,6 +3,7 @@ package hu.szoftarch.webshop.feature.cart
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -75,7 +76,8 @@ fun CartScreen(
                     bottom = 16.dp,
                     start = 32.dp,
                     end = 32.dp
-                )
+                ),
+            total = cartViewModel.total
         )
     }
 }
@@ -83,7 +85,8 @@ fun CartScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun CheckoutButton(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    total: Int
 ) {
     val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember { mutableStateOf(false) }
@@ -103,7 +106,7 @@ private fun CheckoutButton(
         ) {
             Text(
                 modifier = Modifier.weight(1f),
-                text = "5000 HUF",
+                text = "$total HUF",
                 fontWeight = FontWeight.Bold
             )
 
@@ -130,71 +133,45 @@ private fun CheckoutButton(
 
 @Composable
 private fun CheckoutBottomSheetContent() {
-    Column(
+    val fields = listOf(
+        "Name",
+        "Zip Code",
+        "Country",
+        "City",
+        "Street",
+        "Phone Number",
+        "Email Address"
+    )
+
+    LazyColumn(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp)
+            .padding(8.dp),
+        contentPadding = PaddingValues(bottom = 16.dp)
     ) {
+        items(fields) { label ->
+            TextInputWithSpacer(label)
+        }
+
+        item {
+            Spacer(modifier = Modifier.height(16.dp))
+            ActionButtons(
+                onDismiss = { },
+                onPay = { }
+            )
+        }
+    }
+}
+
+@Composable
+private fun TextInputWithSpacer(labelText: String) {
+    Column {
         TextInput(
-            labelText = "Name",
+            labelText = labelText,
             selectedText = "",
             onValueChange = { }
         )
-
         Spacer(modifier = Modifier.height(16.dp))
-
-        TextInput(
-            labelText = "Zip Code",
-            selectedText = "",
-            onValueChange = { }
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        TextInput(
-            labelText = "Country",
-            selectedText = "",
-            onValueChange = { }
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        TextInput(
-            labelText = "City",
-            selectedText = "",
-            onValueChange = { }
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        TextInput(
-            labelText = "Street",
-            selectedText = "",
-            onValueChange = { }
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        TextInput(
-            labelText = "Phone Number",
-            selectedText = "",
-            onValueChange = { }
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        TextInput(
-            labelText = "Email Address",
-            selectedText = "",
-            onValueChange = { }
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        ActionButtons(
-            onDismiss = { },
-            onPay = { }
-        )
     }
 }
 

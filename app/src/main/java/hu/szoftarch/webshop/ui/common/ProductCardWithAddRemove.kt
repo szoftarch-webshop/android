@@ -22,10 +22,11 @@ fun ProductCardWithAddRemove(
     productItem: ProductItem,
     productCount: Int,
     expandedByDefault: Boolean = false,
+    onExpansionChange: () -> Unit = {},
     onAdd: (ProductItem) -> Unit,
     onRemove: (ProductItem) -> Unit
 ) {
-    ProductCard(productItem, expandedByDefault) {
+    ProductCard(productItem, expandedByDefault, onExpansionChange = onExpansionChange) {
         Text(text = productItem.description)
 
         Spacer(modifier = Modifier.height(4.dp))
@@ -37,6 +38,12 @@ fun ProductCardWithAddRemove(
         Text(text = "Products in stock: ${productItem.stock}")
 
         Spacer(modifier = Modifier.height(4.dp))
+
+        Text(text = "Weight: ${productItem.weight} kg")
+
+        Spacer(modifier = Modifier.height(4.dp))
+
+        Text(text = "Material: ${productItem.material}")
 
         Button(
             onClick = {

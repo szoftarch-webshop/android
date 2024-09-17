@@ -25,7 +25,10 @@ class SearchViewModel @Inject constructor(
     var productItems by mutableStateOf<Map<ProductItem, Int>>(mapOf())
         private set
 
-    var options by mutableStateOf(ProductRetrievalOptions(pageNumber = 1, pageSize = 2))
+    var productCardState by mutableStateOf<Map<Int, Boolean>>(mapOf())
+        private set
+
+    var options by mutableStateOf(ProductRetrievalOptions(pageNumber = 1, pageSize = 3))
         private set
 
     val availableCategories = mutableStateOf<List<CategoryItem>>(listOf())
@@ -51,21 +54,27 @@ class SearchViewModel @Inject constructor(
     }
 
     fun onBottomReached() = viewModelScope.launch {
-        options = options.copy(pageNumber = options.pageNumber + 1)
-        val newProducts = getMatchingProductsWithCountInCart()
-        if (newProducts.isNotEmpty()) {
-            productItems = productItems.toMutableMap().apply {
-                putAll(newProducts)
-            }.toMap()
+        getMatchingProductsWithCountInCart().takeIf { it.isNotEmpty() }?.let { newProducts ->
+            options = options.copy(pageNumber = options.pageNumber + 1)
+            productItems = productItems + newProducts
+        } ?: run {
+            options = options.copy(pageNumber = options.pageNumber - 1)
         }
+    }
+
+    fun onChangeProductCardState(productId: Int) {
+        productCardState = productCardState.toMutableMap().apply {
+            this[productId] = !(productCardState[productId] ?: false)
+        }.toMap()
     }
 
     private suspend fun getMatchingProductsWithCountInCart(): Map<ProductItem, Int> {
         val paginatedProducts = productRepository.getProducts(options)
         val productIds = paginatedProducts.products.map { it.id }
         val productCount = cartRepository.getProductCount(productIds)
-        return productCount.map { (id, count) -> productRepository.getProductById(id) to count }
-            .toMap()
+        return productCount.map { (id, count) ->
+            productRepository.getProductById(id) to count
+        }.toMap()
     }
 
     private suspend fun updateProductItems(cartContent: CartContent, productId: Int) {
