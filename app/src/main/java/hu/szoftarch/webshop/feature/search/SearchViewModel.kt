@@ -50,7 +50,7 @@ class SearchViewModel @Inject constructor(
         }
     }
 
-    fun onApplyFilter(newOptions: ProductRetrievalOptions) = viewModelScope.launch {
+    fun onApplyOptions(newOptions: ProductRetrievalOptions) = viewModelScope.launch {
         options = newOptions
         val paginatedProducts = productRepository.getProducts(options)
         productItems = cartRepository.getProductCount(paginatedProducts.products)
