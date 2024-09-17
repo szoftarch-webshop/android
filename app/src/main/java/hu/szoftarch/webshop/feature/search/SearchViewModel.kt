@@ -1,12 +1,12 @@
 package hu.szoftarch.webshop.feature.search
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import hu.szoftarch.webshop.model.data.CartContent
 import hu.szoftarch.webshop.model.data.CategoryItem
 import hu.szoftarch.webshop.model.data.ProductItem
 import hu.szoftarch.webshop.model.data.ProductRetrievalOptions
@@ -25,44 +25,53 @@ class SearchViewModel @Inject constructor(
     var productItems by mutableStateOf<Map<ProductItem, Int>>(mapOf())
         private set
 
-    var availableCategories by mutableStateOf<List<CategoryItem>>(listOf())
+    var options by mutableStateOf(ProductRetrievalOptions(pageNumber = 1, pageSize = 2))
         private set
 
-    var options by mutableStateOf(ProductRetrievalOptions())
-        private set
+    val availableCategories = mutableStateOf<List<CategoryItem>>(listOf())
 
     fun load() = viewModelScope.launch {
-        val paginatedProducts = productRepository.getProducts(options)
-        val ids = paginatedProducts.products.map { it.id }
-        Log.d("SearchViewModel", ids.toString())
-        val inCart = cartRepository.getProductCount(ids)
-        Log.d("SearchViewModel", inCart.toString())
-        productItems =
-            inCart.map { (id, count) -> productRepository.getProductById(id) to count }.toMap()
-        Log.d("SearchViewModel", productItems.toString())
-        availableCategories = categoryRepository.getCategories()
+        productItems = getMatchingProductsWithCountInCart()
+        availableCategories.value = categoryRepository.getCategories()
     }
 
     fun onAdd(productId: Int) = viewModelScope.launch {
-        val cart = cartRepository.addToCart(productId)
-        productItems = productItems.toMutableMap().apply {
-            val product = productRepository.getProductById(productId)
-            this[product] = cart.products[productId] ?: 0
-        }
+        val cartContent = cartRepository.addToCart(productId)
+        updateProductItems(cartContent, productId)
     }
 
     fun onRemove(productId: Int) = viewModelScope.launch {
-        val cart = cartRepository.removeFromCart(productId)
-        productItems = productItems.toMutableMap().apply {
-            val product = productRepository.getProductById(productId)
-            this[product] = cart.products[productId] ?: 0
-        }
+        val cartContent = cartRepository.removeFromCart(productId)
+        updateProductItems(cartContent, productId)
     }
 
     fun onApplyOptions(newOptions: ProductRetrievalOptions) = viewModelScope.launch {
         options = newOptions
+        productItems = getMatchingProductsWithCountInCart()
+    }
+
+    fun onBottomReached() = viewModelScope.launch {
+        options = options.copy(pageNumber = options.pageNumber + 1)
+        val newProducts = getMatchingProductsWithCountInCart()
+        if (newProducts.isNotEmpty()) {
+            productItems = productItems.toMutableMap().apply {
+                putAll(newProducts)
+            }.toMap()
+        }
+    }
+
+    private suspend fun getMatchingProductsWithCountInCart(): Map<ProductItem, Int> {
         val paginatedProducts = productRepository.getProducts(options)
-        productItems = cartRepository.getProductCount(paginatedProducts.products.map { it.id })
-            .map { (id, count) -> productRepository.getProductById(id) to count }.toMap()
+        val productIds = paginatedProducts.products.map { it.id }
+        val productCount = cartRepository.getProductCount(productIds)
+        return productCount.map { (id, count) -> productRepository.getProductById(id) to count }
+            .toMap()
+    }
+
+    private suspend fun updateProductItems(cartContent: CartContent, productId: Int) {
+        productItems = productItems.toMutableMap().apply {
+            val product = productRepository.getProductById(productId)
+            this[product] = cartContent.products[productId] ?: 0
+        }
     }
 }
