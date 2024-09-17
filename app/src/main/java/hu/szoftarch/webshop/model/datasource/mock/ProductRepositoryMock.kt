@@ -1,7 +1,8 @@
 package hu.szoftarch.webshop.model.datasource.mock
 
-import hu.szoftarch.webshop.model.data.FilterOptions
+import hu.szoftarch.webshop.model.data.PaginatedProducts
 import hu.szoftarch.webshop.model.data.ProductItem
+import hu.szoftarch.webshop.model.data.ProductRetrievalOptions
 import hu.szoftarch.webshop.model.repository.ProductRepository
 
 object ProductRepositoryMock : ProductRepository {
@@ -44,11 +45,34 @@ object ProductRepositoryMock : ProductRepository {
         )
     )
 
-    override suspend fun getProducts() = productItems.toList()
+    override suspend fun getProductById(id: Int) =
+        productItems.find { it.id == id } ?: throw NoSuchElementException()
 
-    override suspend fun getProducts(filterOptions: FilterOptions) =
-        productItems.filter(filterOptions::matches)
+    override suspend fun getProductBySerialNumber(serialNumber: String) =
+        productItems.find { serialNumber in it.serialNumber } ?: throw NoSuchElementException()
 
-    override suspend fun getProductsBySerialNumber(serialNumbers: Set<String>) =
-        productItems.filter { it.serialNumber in serialNumbers }
+    override suspend fun getProducts(options: ProductRetrievalOptions): PaginatedProducts {
+        val products = productItems.filter(options::matches)
+        return PaginatedProducts(
+            totalItems = products.size,
+            products = products,
+            currentPage = 1,
+            totalPages = 1
+        )
+    }
+}
+
+private fun ProductRetrievalOptions.matches(product: ProductItem): Boolean {
+    val nameOrSerialNumber = searchString.trim().lowercase()
+    val nameOrSerialNumberOk = nameOrSerialNumber.isBlank()
+            || product.name.trim().lowercase().startsWith(nameOrSerialNumber)
+            || product.serialNumber.trim().lowercase().startsWith(nameOrSerialNumber)
+
+    val material = material.trim().lowercase()
+    val materialOk = material.isBlank()
+            || product.material.trim().lowercase().startsWith(material)
+
+    val categoryOk = categoryId in product.categoryIds
+
+    return nameOrSerialNumberOk && materialOk && categoryOk
 }
