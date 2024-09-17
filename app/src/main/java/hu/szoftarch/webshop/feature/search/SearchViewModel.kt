@@ -1,6 +1,5 @@
 package hu.szoftarch.webshop.feature.search
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -34,12 +33,9 @@ class SearchViewModel @Inject constructor(
     fun load() = viewModelScope.launch {
         val paginatedProducts = productRepository.getProducts(options)
         val ids = paginatedProducts.products.map { it.id }
-        Log.d("SearchViewModel", ids.toString())
         val inCart = cartRepository.getProductCount(ids)
-        Log.d("SearchViewModel", inCart.toString())
         productItems =
             inCart.map { (id, count) -> productRepository.getProductById(id) to count }.toMap()
-        Log.d("SearchViewModel", productItems.toString())
         availableCategories = categoryRepository.getCategories()
     }
 
