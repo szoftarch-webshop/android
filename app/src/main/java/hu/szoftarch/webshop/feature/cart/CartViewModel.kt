@@ -1,6 +1,7 @@
 package hu.szoftarch.webshop.feature.cart
 
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
@@ -23,6 +24,9 @@ class CartViewModel @Inject constructor(
     var productItems by mutableStateOf<Map<ProductItem, Int>>(mapOf())
         private set
 
+    var total by mutableIntStateOf(0)
+        private set
+
     fun load() = viewModelScope.launch {
         setProductItems(cartRepository.getProductsInCart())
     }
@@ -39,5 +43,6 @@ class CartViewModel @Inject constructor(
         productItems =
             cartContent.products.map { (id, count) -> productRepository.getProductById(id) to count }
                 .toMap()
+        total = productItems.map { (product, count) -> product.price * count }.sum()
     }
 }
