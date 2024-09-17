@@ -1,5 +1,6 @@
 package hu.szoftarch.webshop.feature.search
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -32,27 +33,36 @@ class SearchViewModel @Inject constructor(
 
     fun load() = viewModelScope.launch {
         val paginatedProducts = productRepository.getProducts(options)
-        productItems = cartRepository.getProductCount(paginatedProducts.products)
+        val ids = paginatedProducts.products.map { it.id }
+        Log.d("SearchViewModel", ids.toString())
+        val inCart = cartRepository.getProductCount(ids)
+        Log.d("SearchViewModel", inCart.toString())
+        productItems =
+            inCart.map { (id, count) -> productRepository.getProductById(id) to count }.toMap()
+        Log.d("SearchViewModel", productItems.toString())
         availableCategories = categoryRepository.getCategories()
     }
 
-    fun onAdd(product: ProductItem) = viewModelScope.launch {
-        val cart = cartRepository.addToCart(product)
+    fun onAdd(productId: Int) = viewModelScope.launch {
+        val cart = cartRepository.addToCart(productId)
         productItems = productItems.toMutableMap().apply {
-            this[product] = cart[product] ?: 0
+            val product = productRepository.getProductById(productId)
+            this[product] = cart.products[productId] ?: 0
         }
     }
 
-    fun onRemove(product: ProductItem) = viewModelScope.launch {
-        val cart = cartRepository.removeFromCart(product)
+    fun onRemove(productId: Int) = viewModelScope.launch {
+        val cart = cartRepository.removeFromCart(productId)
         productItems = productItems.toMutableMap().apply {
-            this[product] = cart[product] ?: 0
+            val product = productRepository.getProductById(productId)
+            this[product] = cart.products[productId] ?: 0
         }
     }
 
     fun onApplyOptions(newOptions: ProductRetrievalOptions) = viewModelScope.launch {
         options = newOptions
         val paginatedProducts = productRepository.getProducts(options)
-        productItems = cartRepository.getProductCount(paginatedProducts.products)
+        productItems = cartRepository.getProductCount(paginatedProducts.products.map { it.id })
+            .map { (id, count) -> productRepository.getProductById(id) to count }.toMap()
     }
 }

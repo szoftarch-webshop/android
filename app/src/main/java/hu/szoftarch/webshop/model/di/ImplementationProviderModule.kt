@@ -4,7 +4,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import hu.szoftarch.webshop.model.datasource.mock.CartRepositoryMock
+import hu.szoftarch.webshop.model.datasource.impl.CartRepositoryImpl
 import hu.szoftarch.webshop.model.datasource.mock.CategoryRepositoryMock
 import hu.szoftarch.webshop.model.datasource.mock.PaymentServiceMock
 import hu.szoftarch.webshop.model.datasource.mock.ProductRepositoryMock
@@ -17,7 +17,7 @@ import hu.szoftarch.webshop.model.service.PaymentService
 @InstallIn(SingletonComponent::class)
 object ImplementationProviderModule {
     @Provides
-    fun cartRepository(): CartRepository = CartRepositoryMock
+    fun cartRepository(): CartRepository = CartRepositoryImpl
 
     @Provides
     fun productRepository(): ProductRepository = ProductRepositoryMock

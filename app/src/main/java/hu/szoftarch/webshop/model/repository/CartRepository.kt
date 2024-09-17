@@ -1,13 +1,13 @@
 package hu.szoftarch.webshop.model.repository
 
-import hu.szoftarch.webshop.model.data.ProductItem
+import hu.szoftarch.webshop.model.data.CartContent
 
 interface CartRepository {
-    suspend fun addToCart(product: ProductItem): Map<ProductItem, Int>
+    suspend fun addToCart(productId: Int): CartContent
 
-    suspend fun removeFromCart(product: ProductItem): Map<ProductItem, Int>
+    suspend fun removeFromCart(productId: Int): CartContent
 
-    suspend fun getProductsInCart(): Map<ProductItem, Int>
+    suspend fun getProductsInCart(): CartContent
 
-    suspend fun getProductCount(products: Iterable<ProductItem>): Map<ProductItem, Int>
+    suspend fun getProductCount(productIds: List<Int>): Map<Int, Int>
 }

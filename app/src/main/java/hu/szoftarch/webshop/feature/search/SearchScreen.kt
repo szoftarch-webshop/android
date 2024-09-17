@@ -67,8 +67,8 @@ fun SearchScreen(
                 ProductCardWithAddRemove(
                     productItem = product,
                     productCount = count,
-                    onAdd = searchViewModel::onAdd,
-                    onRemove = searchViewModel::onRemove
+                    onAdd = { searchViewModel.onAdd(product.id) },
+                    onRemove = { searchViewModel.onRemove(product.id) }
                 )
             }
 

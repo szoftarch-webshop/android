@@ -74,22 +74,27 @@ class CameraViewModel @Inject constructor(
                 val serialNumbers = serialNumberRecognitionService.getSerialNumbers(bitmap)
                 val recognizedProducts =
                     serialNumbers.map { sn -> productRepository.getProductBySerialNumber(sn) }
-                productItems = cartRepository.getProductCount(recognizedProducts)
+                productItems =
+                    cartRepository.getProductCount(recognizedProducts.map { product -> product.id })
+                        .map { (id, count) -> productRepository.getProductById(id) to count }
+                        .toMap()
             }
         }
     }
 
-    fun onAdd(product: ProductItem) = viewModelScope.launch {
-        val cart = cartRepository.addToCart(product)
+    fun onAdd(productId: Int) = viewModelScope.launch {
+        val cart = cartRepository.addToCart(productId)
         productItems = productItems.toMutableMap().apply {
-            this[product] = cart[product] ?: 0
+            val product = productRepository.getProductById(productId)
+            this[product] = cart.products[productId] ?: 0
         }
     }
 
-    fun onRemove(product: ProductItem) = viewModelScope.launch {
-        val cart = cartRepository.removeFromCart(product)
+    fun onRemove(productId: Int) = viewModelScope.launch {
+        val cart = cartRepository.removeFromCart(productId)
         productItems = productItems.toMutableMap().apply {
-            this[product] = cart[product] ?: 0
+            val product = productRepository.getProductById(productId)
+            this[product] = cart.products[productId] ?: 0
         }
     }
 }
