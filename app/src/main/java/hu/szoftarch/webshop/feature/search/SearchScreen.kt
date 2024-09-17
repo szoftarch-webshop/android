@@ -42,7 +42,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import hu.szoftarch.webshop.model.data.CategoryItem
-import hu.szoftarch.webshop.model.data.FilterOptions
+import hu.szoftarch.webshop.model.data.ProductRetrievalOptions
 import hu.szoftarch.webshop.ui.common.ProductCardWithAddRemove
 import hu.szoftarch.webshop.ui.common.TextInput
 import kotlinx.coroutines.launch
@@ -97,7 +97,7 @@ fun SearchScreen(
         ModalBottomSheet(
             onDismissRequest = { showBottomSheet = false }, sheetState = sheetState
         ) {
-            FilterBottomSheetContent(filterOptions = searchViewModel.filterOptions,
+            FilterBottomSheetContent(options = searchViewModel.options,
                 categories = searchViewModel.availableCategories,
                 onApplyFilter = searchViewModel::onApplyFilter,
                 onDismiss = {
@@ -113,22 +113,22 @@ fun SearchScreen(
 
 @Composable
 private fun FilterBottomSheetContent(
-    filterOptions: FilterOptions,
+    options: ProductRetrievalOptions,
     categories: List<CategoryItem>,
     onDismiss: () -> Unit,
-    onApplyFilter: (FilterOptions) -> Unit
+    onApplyFilter: (ProductRetrievalOptions) -> Unit
 ) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp)
     ) {
-        var nameOrSerialNumber by remember { mutableStateOf(filterOptions.nameOrSerialNumber) }
-        var material by remember { mutableStateOf(filterOptions.material) }
-        var selectedCategoryId by remember { mutableIntStateOf(filterOptions.categoryId) }
+        var nameOrSerialNumber by remember { mutableStateOf(options.searchString) }
+        var material by remember { mutableStateOf(options.material) }
+        var selectedCategoryId by remember { mutableIntStateOf(options.categoryId) }
 
         TextInput(
-            selectedText = filterOptions.nameOrSerialNumber,
+            selectedText = options.searchString,
             labelText = "Name or Serial Number",
             onValueChange = { nameOrSerialNumber = it }
         )
@@ -136,7 +136,7 @@ private fun FilterBottomSheetContent(
         Spacer(modifier = Modifier.height(16.dp))
 
         TextInput(
-            selectedText = filterOptions.material,
+            selectedText = options.material,
             labelText = "Material",
             onValueChange = { material = it }
         )
@@ -154,8 +154,8 @@ private fun FilterBottomSheetContent(
         ActionButtons(
             onDismiss = onDismiss,
             onApplyFilter = onApplyFilter,
-            filterOptions = FilterOptions(
-                nameOrSerialNumber = nameOrSerialNumber,
+            options = ProductRetrievalOptions(
+                searchString = nameOrSerialNumber,
                 material = material,
                 categoryId = selectedCategoryId
             )
@@ -211,8 +211,8 @@ private fun CategorySelector(
 @Composable
 private fun ActionButtons(
     onDismiss: () -> Unit,
-    onApplyFilter: (FilterOptions) -> Unit,
-    filterOptions: FilterOptions
+    onApplyFilter: (ProductRetrievalOptions) -> Unit,
+    options: ProductRetrievalOptions
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -229,7 +229,7 @@ private fun ActionButtons(
         Button(
             modifier = Modifier.weight(1f),
             onClick = {
-                onApplyFilter(filterOptions)
+                onApplyFilter(options)
                 onDismiss()
             },
             content = { Text("Apply") }

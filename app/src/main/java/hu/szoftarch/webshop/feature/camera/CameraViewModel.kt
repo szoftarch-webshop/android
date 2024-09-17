@@ -72,7 +72,8 @@ class CameraViewModel @Inject constructor(
                 val bitmap = BitmapFactory.decodeStream(it)
                 picture = bitmap.rotateIfRequired(context, pictureUri!!)
                 val serialNumbers = serialNumberRecognitionService.getSerialNumbers(bitmap)
-                val recognizedProducts = productRepository.getProductsBySerialNumber(serialNumbers)
+                val recognizedProducts =
+                    serialNumbers.map { sn -> productRepository.getProductBySerialNumber(sn) }
                 productItems = cartRepository.getProductCount(recognizedProducts)
             }
         }

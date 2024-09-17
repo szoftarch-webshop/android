@@ -7,8 +7,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import hu.szoftarch.webshop.model.data.CategoryItem
-import hu.szoftarch.webshop.model.data.FilterOptions
 import hu.szoftarch.webshop.model.data.ProductItem
+import hu.szoftarch.webshop.model.data.ProductRetrievalOptions
 import hu.szoftarch.webshop.model.repository.CartRepository
 import hu.szoftarch.webshop.model.repository.CategoryRepository
 import hu.szoftarch.webshop.model.repository.ProductRepository
@@ -27,12 +27,12 @@ class SearchViewModel @Inject constructor(
     var availableCategories by mutableStateOf<List<CategoryItem>>(listOf())
         private set
 
-    var filterOptions by mutableStateOf(FilterOptions())
+    var options by mutableStateOf(ProductRetrievalOptions())
         private set
 
     fun load() = viewModelScope.launch {
-        val products = productRepository.getProducts()
-        productItems = cartRepository.getProductCount(products)
+        val paginatedProducts = productRepository.getProducts(options)
+        productItems = cartRepository.getProductCount(paginatedProducts.products)
         availableCategories = categoryRepository.getCategories()
     }
 
@@ -50,9 +50,9 @@ class SearchViewModel @Inject constructor(
         }
     }
 
-    fun onApplyFilter(newFilterOptions: FilterOptions) = viewModelScope.launch {
-        filterOptions = newFilterOptions
-        val products = productRepository.getProducts(filterOptions)
-        productItems = cartRepository.getProductCount(products)
+    fun onApplyFilter(newOptions: ProductRetrievalOptions) = viewModelScope.launch {
+        options = newOptions
+        val paginatedProducts = productRepository.getProducts(options)
+        productItems = cartRepository.getProductCount(paginatedProducts.products)
     }
 }
