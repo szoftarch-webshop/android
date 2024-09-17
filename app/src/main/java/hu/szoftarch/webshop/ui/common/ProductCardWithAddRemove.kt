@@ -22,10 +22,11 @@ fun ProductCardWithAddRemove(
     productItem: ProductItem,
     productCount: Int,
     expandedByDefault: Boolean = false,
+    onExpansionChange: () -> Unit = {},
     onAdd: (ProductItem) -> Unit,
     onRemove: (ProductItem) -> Unit
 ) {
-    ProductCard(productItem, expandedByDefault) {
+    ProductCard(productItem, expandedByDefault, onExpansionChange = onExpansionChange) {
         Text(text = productItem.description)
 
         Spacer(modifier = Modifier.height(4.dp))

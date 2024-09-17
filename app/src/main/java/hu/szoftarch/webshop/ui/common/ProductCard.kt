@@ -40,6 +40,7 @@ import hu.szoftarch.webshop.model.data.ProductItem
 fun ProductCard(
     productItem: ProductItem,
     expandedByDefault: Boolean = false,
+    onExpansionChange: () -> Unit = {},
     expandedContent: @Composable () -> Unit
 ) {
     var expanded by remember {
@@ -53,6 +54,7 @@ fun ProductCard(
         shape = RoundedCornerShape(12.dp),
         onClick = {
             expanded = !expanded
+            onExpansionChange()
         }) {
         Column(
             modifier = Modifier
