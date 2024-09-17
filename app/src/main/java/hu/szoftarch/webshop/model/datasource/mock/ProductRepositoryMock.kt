@@ -32,6 +32,30 @@ object ProductRepositoryMock : ProductRepository {
             imageUrl = "https://picsum.photos/700/400"
         ),
         ProductItem(
+            id = 3,
+            serialNumber = "3333333333",
+            name = "Product #3",
+            weight = 0.3,
+            material = "Aluminium",
+            description = "Mock product #3",
+            price = 3000,
+            stock = 30,
+            categoryIds = listOf(3),
+            imageUrl = "https://picsum.photos/600/400"
+        ),
+        ProductItem(
+            id = 4,
+            serialNumber = "4444444444",
+            name = "Product #4",
+            weight = 0.4,
+            material = "Aluminium",
+            description = "Mock product #4",
+            price = 4000,
+            stock = 40,
+            categoryIds = listOf(1, 2),
+            imageUrl = "https://picsum.photos/500/500"
+        ),
+        ProductItem(
             id = 5,
             serialNumber = "5432167890",
             name = "Something else",
@@ -42,6 +66,18 @@ object ProductRepositoryMock : ProductRepository {
             stock = 10,
             categoryIds = listOf(1, 2, 3),
             imageUrl = "https://picsum.photos/400/400"
+        ),
+        ProductItem(
+            id = 6,
+            serialNumber = "6666666666",
+            name = "Product #6",
+            weight = 0.6,
+            material = "Glass",
+            description = "Mock product #6",
+            price = 600,
+            stock = 60,
+            categoryIds = listOf(2),
+            imageUrl = "https://picsum.photos/300/400"
         )
     )
 
@@ -52,12 +88,21 @@ object ProductRepositoryMock : ProductRepository {
         productItems.find { serialNumber in it.serialNumber } ?: throw NoSuchElementException()
 
     override suspend fun getProducts(options: ProductRetrievalOptions): PaginatedProducts {
-        val products = productItems.filter(options::matches)
+        val filteredProducts = productItems.filter(options::matches)
+
+        val totalItems = filteredProducts.size
+        val totalPages = (totalItems + options.pageSize - 1) / options.pageSize
+
+        val startIndex = (options.pageNumber - 1) * options.pageSize
+        val endIndex = (startIndex + options.pageSize).coerceAtMost(totalItems)
+
+        val products = filteredProducts.subList(startIndex, endIndex)
+
         return PaginatedProducts(
-            totalItems = products.size,
+            totalItems = totalItems,
             products = products,
-            currentPage = 1,
-            totalPages = 1
+            currentPage = options.pageNumber,
+            totalPages = totalPages
         )
     }
 }
