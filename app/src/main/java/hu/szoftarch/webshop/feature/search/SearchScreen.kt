@@ -30,7 +30,6 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -125,28 +124,32 @@ private fun FilterBottomSheetContent(
     ) {
         var nameOrSerialNumber by remember { mutableStateOf(options.searchString) }
         var material by remember { mutableStateOf(options.material) }
-        var selectedCategoryId by remember { mutableIntStateOf(options.categoryId) }
+        var selectedCategoryName by remember { mutableStateOf(options.category) }
 
-        TextInput(
-            selectedText = options.searchString,
-            labelText = "Name or Serial Number",
-            onValueChange = { nameOrSerialNumber = it }
-        )
+        options.searchString?.let {
+            TextInput(
+                selectedText = it,
+                labelText = "Name or Serial Number",
+                onValueChange = { nameOrSerialNumber = it }
+            )
+        }
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        TextInput(
-            selectedText = options.material,
-            labelText = "Material",
-            onValueChange = { material = it }
-        )
+        options.material?.let {
+            TextInput(
+                selectedText = it,
+                labelText = "Material",
+                onValueChange = { material = it }
+            )
+        }
 
         Spacer(modifier = Modifier.height(16.dp))
 
         CategorySelector(
             categories = categories,
-            selectedCategoryId = selectedCategoryId,
-            onCategorySelected = { selectedCategoryId = it }
+            selectedCategoryName = selectedCategoryName,
+            onCategorySelected = { selectedCategoryName = it }
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -157,7 +160,7 @@ private fun FilterBottomSheetContent(
             options = ProductRetrievalOptions(
                 searchString = nameOrSerialNumber,
                 material = material,
-                categoryId = selectedCategoryId
+                category = selectedCategoryName
             )
         )
     }
@@ -167,11 +170,11 @@ private fun FilterBottomSheetContent(
 @Composable
 private fun CategorySelector(
     categories: List<CategoryItem>,
-    selectedCategoryId: Int,
-    onCategorySelected: (Int) -> Unit
+    selectedCategoryName: String?,
+    onCategorySelected: (String?) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
-    val selectedCategory = categories.firstOrNull { it.id == selectedCategoryId }
+    val selectedCategory = categories.firstOrNull { it.name == selectedCategoryName }
 
     ExposedDropdownMenuBox(
         expanded = expanded,
@@ -198,7 +201,7 @@ private fun CategorySelector(
                 DropdownMenuItem(
                     text = { Text(text = category.name) },
                     onClick = {
-                        onCategorySelected(category.id)
+                        onCategorySelected(category.name)
                         expanded = false
                     },
                     contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
