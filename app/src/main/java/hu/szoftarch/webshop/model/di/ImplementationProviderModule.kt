@@ -4,7 +4,9 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import hu.szoftarch.webshop.model.api.ApiService
 import hu.szoftarch.webshop.model.datasource.impl.CartRepositoryImpl
+import hu.szoftarch.webshop.model.datasource.impl.ProductRepositoryImpl
 import hu.szoftarch.webshop.model.datasource.mock.CategoryRepositoryMock
 import hu.szoftarch.webshop.model.datasource.mock.PaymentServiceMock
 import hu.szoftarch.webshop.model.datasource.mock.ProductRepositoryMock
@@ -20,7 +22,9 @@ object ImplementationProviderModule {
     fun cartRepository(): CartRepository = CartRepositoryImpl
 
     @Provides
-    fun productRepository(): ProductRepository = ProductRepositoryMock
+    fun provideProductRepository(apiService: ApiService): ProductRepository {
+        return ProductRepositoryImpl(apiService)
+    }
 
     @Provides
     fun categoryRepository(): CategoryRepository = CategoryRepositoryMock
