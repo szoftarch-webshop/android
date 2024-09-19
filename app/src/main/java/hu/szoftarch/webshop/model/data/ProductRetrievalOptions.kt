@@ -6,7 +6,11 @@ import com.squareup.moshi.JsonClass
 data class ProductRetrievalOptions(
     val pageNumber: Int = 1,
     val pageSize: Int = 10,
-    val categoryId: Int = -1,
-    val material: String = "",
-    val searchString: String = ""
+    val sortBy: String = "name",
+    val sortDirection: String = "asc",
+    val minPrice: Int? = null,
+    val maxPrice: Int? = null,
+    val category: String? = null,
+    val material: String? = null,
+    val searchString: String? = null
 )

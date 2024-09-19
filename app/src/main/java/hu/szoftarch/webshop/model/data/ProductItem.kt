@@ -12,7 +12,7 @@ data class ProductItem(
     val description: String = "No description",
     val price: Int = 0,
     val stock: Int = 0,
-    val categoryIds: List<Int> = emptyList(),
+    val categoryNames: List<String> = emptyList(),
     val imageUrl: String = "https://picsum.photos/700/400"
 ) {
     val priceHuf = "$price HUF"
