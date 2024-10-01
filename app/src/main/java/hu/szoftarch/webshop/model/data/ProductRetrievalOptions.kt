@@ -10,7 +10,7 @@ data class ProductRetrievalOptions(
     val sortDirection: String = "asc",
     val minPrice: Int? = null,
     val maxPrice: Int? = null,
-    val category: String? = null,
+    val categoryId: Int? = null,
     val material: String? = null,
     val searchString: String? = null
 )

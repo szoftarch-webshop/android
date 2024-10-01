@@ -124,32 +124,28 @@ private fun FilterBottomSheetContent(
     ) {
         var nameOrSerialNumber by remember { mutableStateOf(options.searchString) }
         var material by remember { mutableStateOf(options.material) }
-        var selectedCategoryName by remember { mutableStateOf(options.category) }
+        var selectedCategoryId by remember { mutableStateOf(options.categoryId) }
 
-        options.searchString?.let {
-            TextInput(
-                selectedText = it,
-                labelText = "Name or Serial Number",
-                onValueChange = { nameOrSerialNumber = it }
-            )
-        }
+        TextInput(
+            selectedText = options.searchString ?: "",
+            labelText = "Name or Serial Number",
+            onValueChange = { nameOrSerialNumber = it }
+        )
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        options.material?.let {
-            TextInput(
-                selectedText = it,
-                labelText = "Material",
-                onValueChange = { material = it }
-            )
-        }
+        TextInput(
+            selectedText = options.material ?: "",
+            labelText = "Material",
+            onValueChange = { material = it }
+        )
 
         Spacer(modifier = Modifier.height(16.dp))
 
         CategorySelector(
             categories = categories,
-            selectedCategoryName = selectedCategoryName,
-            onCategorySelected = { selectedCategoryName = it }
+            selectedCategoryId = selectedCategoryId,
+            onCategorySelected = { selectedCategoryId = it }
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -160,7 +156,7 @@ private fun FilterBottomSheetContent(
             options = ProductRetrievalOptions(
                 searchString = nameOrSerialNumber,
                 material = material,
-                category = selectedCategoryName
+                categoryId = selectedCategoryId
             )
         )
     }
@@ -170,11 +166,11 @@ private fun FilterBottomSheetContent(
 @Composable
 private fun CategorySelector(
     categories: List<CategoryItem>,
-    selectedCategoryName: String?,
-    onCategorySelected: (String?) -> Unit
+    selectedCategoryId: Int?,
+    onCategorySelected: (Int) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
-    val selectedCategory = categories.firstOrNull { it.name == selectedCategoryName }
+    val selectedCategory = categories.firstOrNull { it.id == selectedCategoryId }
 
     ExposedDropdownMenuBox(
         expanded = expanded,
@@ -186,7 +182,7 @@ private fun CategorySelector(
                 .menuAnchor(MenuAnchorType.PrimaryNotEditable)
                 .fillMaxWidth(),
             readOnly = true,
-            value = selectedCategory?.name ?: "",
+            value = selectedCategory?.name ?: "Select Category",
             onValueChange = {},
             label = { Text("Category") },
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
@@ -201,7 +197,7 @@ private fun CategorySelector(
                 DropdownMenuItem(
                     text = { Text(text = category.name) },
                     onClick = {
-                        onCategorySelected(category.name)
+                        onCategorySelected(category.id)
                         expanded = false
                     },
                     contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
