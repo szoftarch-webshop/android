@@ -2,6 +2,7 @@ package hu.szoftarch.webshop
 
 import hu.szoftarch.webshop.model.api.ApiService
 import hu.szoftarch.webshop.model.data.ProductRetrievalOptions
+import hu.szoftarch.webshop.model.datasource.impl.CategoryRepositoryImpl
 import hu.szoftarch.webshop.model.datasource.impl.ProductRepositoryImpl
 import kotlinx.coroutines.runBlocking
 import okhttp3.OkHttpClient
@@ -11,6 +12,7 @@ import org.junit.Assert.*
 import org.junit.Before
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import okhttp3.logging.HttpLoggingInterceptor
 
 
 class ProductRepositoryImplIntegrationTest {
@@ -21,7 +23,12 @@ class ProductRepositoryImplIntegrationTest {
 
     @Before
     fun setup() {
+
+        val logging = HttpLoggingInterceptor()
+        logging.setLevel(HttpLoggingInterceptor.Level.BODY)
+
         client = OkHttpClient.Builder()
+            .addInterceptor(logging)
             .build()
 
         val retrofit = Retrofit.Builder()
@@ -48,7 +55,7 @@ class ProductRepositoryImplIntegrationTest {
     @Test
     fun `test getProducts with sort and pagination`() = runBlocking {
         val options = ProductRetrievalOptions(
-            pageNumber = 2,
+            pageNumber = 1,
             pageSize = 5,
             sortBy = "price",
             sortDirection = "desc"
@@ -75,7 +82,7 @@ class ProductRepositoryImplIntegrationTest {
     @Test
     fun `test getProducts with category and material filter`() = runBlocking {
         val options = ProductRetrievalOptions(
-            category = "Electronics",
+            categoryId = 2,
             material = "Aluminum"
         )
         val result = productRepository.getProducts(options)
@@ -101,7 +108,7 @@ class ProductRepositoryImplIntegrationTest {
         val options = ProductRetrievalOptions(
             minPrice = 1000000,
             maxPrice = 2000000,
-            category = "NonExistentCategory",
+            categoryId = 0,
             material = "NonExistentMaterial"
         )
         val result = productRepository.getProducts(options)
@@ -164,5 +171,42 @@ class ProductRepositoryImplIntegrationTest {
 
         assertNotNull(product)
         assertEquals(serialNumber, product.serialNumber)
+    }
+}
+
+class CategoryRepositoryImplIntegrationTest {
+
+    private lateinit var apiService: ApiService
+    private lateinit var CategoryRepository: CategoryRepositoryImpl
+    private lateinit var client: OkHttpClient
+
+    @Before
+    fun setup() {
+
+        val logging = HttpLoggingInterceptor()
+        logging.setLevel(HttpLoggingInterceptor.Level.BODY)
+
+        client = OkHttpClient.Builder()
+            .addInterceptor(logging)
+            .build()
+
+        val retrofit = Retrofit.Builder()
+            .baseUrl("http://192.168.0.154:5120/api/")
+            .client(client)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+
+        apiService = retrofit.create(ApiService::class.java)
+
+        CategoryRepository = CategoryRepositoryImpl(apiService)
+    }
+
+    @Test
+    fun `test getProducts retrieves 200 OK from API`() = runBlocking {
+        val options = ProductRetrievalOptions(pageNumber = 1, pageSize = 10)
+
+        val result = CategoryRepository.getCategories()
+        assertNotNull(result)
+        assertTrue(result.isNotEmpty())
     }
 }
