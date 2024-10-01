@@ -1,5 +1,7 @@
 package hu.szoftarch.webshop.common
+import hu.szoftarch.webshop.R
 
 object Constants {
-    const val BASE_URL = "http://192.168.0.154:5120/api/"
+    val BASE_URL: String
+        get() = R.string.base_url.toString()
 }
