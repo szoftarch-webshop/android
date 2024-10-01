@@ -1,5 +1,6 @@
 package hu.szoftarch.webshop.model.api
 
+import hu.szoftarch.webshop.model.data.CategoryItem
 import hu.szoftarch.webshop.model.data.PaginatedProducts
 import hu.szoftarch.webshop.model.data.ProductItem
 import retrofit2.http.GET
@@ -16,7 +17,7 @@ interface ApiService {
         @Query("sortDirection") sortDirection: String?,
         @Query("minPrice") minPrice: Int? = null,
         @Query("maxPrice") maxPrice: Int? = null,
-        @Query("category") category: String? = null,
+        @Query("category") category: Int? = null,
         @Query("material") material: String? = null,
         @Query("searchString") searchString: String? = null
     ): PaginatedProducts
@@ -26,4 +27,7 @@ interface ApiService {
 
     @GET("product/serial/{serialNumber}")
     suspend fun getProductBySerialNumber(@Path("serialNumber") serialNumber: String): ProductItem
+
+    @GET("Category")
+    suspend fun getCategories(): List<CategoryItem>
 }
