@@ -1,16 +1,18 @@
 package hu.szoftarch.webshop.di.network
 
+import android.app.Application
+import android.content.Context
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import hu.szoftarch.webshop.common.Constants.BASE_URL
 import hu.szoftarch.webshop.model.api.ApiService
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import javax.inject.Singleton
 import retrofit2.converter.gson.GsonConverterFactory
+import hu.szoftarch.webshop.R
 
 
 @Module
@@ -18,8 +20,10 @@ import retrofit2.converter.gson.GsonConverterFactory
 object NetworkModule {
 
     @Provides
-    fun provideBaseUrl(): String {
-        return BASE_URL
+    @Singleton
+    fun provideBaseUrl(context: Context): String {
+        // Load the base URL from the resources
+        return context.getString(R.string.base_url)
     }
 
     @Provides
@@ -54,4 +58,12 @@ object NetworkModule {
     fun provideApiService(retrofit: Retrofit): ApiService =
         retrofit.create(ApiService::class.java)
 
+}
+
+@Module
+@InstallIn(SingletonComponent::class)
+object AppModule {
+
+    @Provides
+    fun provideApplicationContext(app: Application): Context = app.applicationContext
 }
