@@ -1,4 +1,5 @@
 package hu.szoftarch.webshop.common
+
 import hu.szoftarch.webshop.R
 
 object Constants {
