@@ -31,12 +31,18 @@ class CartViewModel @Inject constructor(
         setProductItems(cartRepository.getProductsInCart())
     }
 
-    fun onAdd(productId: Int) = viewModelScope.launch {
-        setProductItems(cartRepository.addToCart(productId))
+    fun onAdd(productId: Int): Boolean {
+        viewModelScope.launch {
+            setProductItems(cartRepository.addToCart(productId))
+        }
+        return true
     }
 
-    fun onRemove(productId: Int) = viewModelScope.launch {
-        setProductItems(cartRepository.removeFromCart(productId))
+    fun onRemove(productId: Int): Boolean {
+        viewModelScope.launch {
+            setProductItems(cartRepository.removeFromCart(productId))
+        }
+        return true
     }
 
     private suspend fun setProductItems(cartContent: CartContent) {

@@ -38,14 +38,20 @@ class SearchViewModel @Inject constructor(
         availableCategories.value = categoryRepository.getCategories()
     }
 
-    fun onAdd(productId: Int) = viewModelScope.launch {
-        val cartContent = cartRepository.addToCart(productId)
-        updateProductItems(cartContent, productId)
+    fun onAdd(productId: Int): Boolean {
+        viewModelScope.launch {
+            val cartContent = cartRepository.addToCart(productId)
+            updateProductItems(cartContent, productId)
+        }
+        return true
     }
 
-    fun onRemove(productId: Int) = viewModelScope.launch {
-        val cartContent = cartRepository.removeFromCart(productId)
-        updateProductItems(cartContent, productId)
+    fun onRemove(productId: Int): Boolean {
+        viewModelScope.launch {
+            val cartContent = cartRepository.removeFromCart(productId)
+            updateProductItems(cartContent, productId)
+        }
+        return true
     }
 
     fun onApplyOptions(newOptions: ProductRetrievalOptions) = viewModelScope.launch {
