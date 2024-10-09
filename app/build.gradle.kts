@@ -104,7 +104,10 @@ dependencies {
 
     // Kapt (annotation processors)
     kapt(libs.hilt.android.compiler)
-    kapt(libs.moshi.kotlin.codegen)
+    implementation(libs.logging.interceptor)
+
+    implementation(libs.converter.gson)
+
 }
 
 kapt {

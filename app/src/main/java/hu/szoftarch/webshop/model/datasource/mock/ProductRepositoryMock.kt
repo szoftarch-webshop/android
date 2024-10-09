@@ -16,7 +16,7 @@ object ProductRepositoryMock : ProductRepository {
             description = "High-performance laptop",
             price = 1200,
             stock = 50,
-            categoryIds = listOf(1),
+            categoryNames = listOf("Eletronics"),
             imageUrl = "https://picsum.photos/700/500"
         ),
         ProductItem(
@@ -28,7 +28,7 @@ object ProductRepositoryMock : ProductRepository {
             description = "Latest model smartphone",
             price = 800,
             stock = 100,
-            categoryIds = listOf(2),
+            categoryNames = listOf("Eletronics", "Mobile"),
             imageUrl = "https://picsum.photos/700/400"
         ),
         ProductItem(
@@ -40,7 +40,7 @@ object ProductRepositoryMock : ProductRepository {
             description = "Mock product #3",
             price = 3000,
             stock = 30,
-            categoryIds = listOf(3),
+            categoryNames = listOf("MockCat"),
             imageUrl = "https://picsum.photos/600/400"
         ),
         ProductItem(
@@ -52,7 +52,7 @@ object ProductRepositoryMock : ProductRepository {
             description = "Mock product #4",
             price = 4000,
             stock = 40,
-            categoryIds = listOf(1, 2),
+            categoryNames = listOf("Eletronics", "Mobile"),
             imageUrl = "https://picsum.photos/500/500"
         ),
         ProductItem(
@@ -64,7 +64,7 @@ object ProductRepositoryMock : ProductRepository {
             description = "No idea what this is",
             price = 15000,
             stock = 10,
-            categoryIds = listOf(1, 2, 3),
+            categoryNames = listOf("Eletronics", "Mobile", "MockCat"),
             imageUrl = "https://picsum.photos/400/400"
         ),
         ProductItem(
@@ -76,7 +76,7 @@ object ProductRepositoryMock : ProductRepository {
             description = "Mock product #6",
             price = 600,
             stock = 60,
-            categoryIds = listOf(2),
+            categoryNames = listOf("Mobile"),
             imageUrl = "https://picsum.photos/300/400"
         )
     )
@@ -108,16 +108,14 @@ object ProductRepositoryMock : ProductRepository {
 }
 
 private fun ProductRetrievalOptions.matches(product: ProductItem): Boolean {
-    val nameOrSerialNumber = searchString.trim().lowercase()
+    val nameOrSerialNumber = searchString?.trim()?.lowercase() ?: ""
     val nameOrSerialNumberOk = nameOrSerialNumber.isBlank()
             || product.name.trim().lowercase().startsWith(nameOrSerialNumber)
             || product.serialNumber.trim().lowercase().startsWith(nameOrSerialNumber)
 
-    val material = material.trim().lowercase()
+    val material = material?.trim()?.lowercase() ?: ""
     val materialOk = material.isBlank()
             || product.material.trim().lowercase().startsWith(material)
 
-    val categoryOk = categoryId == -1 || categoryId in product.categoryIds
-
-    return nameOrSerialNumberOk && materialOk && categoryOk
+    return nameOrSerialNumberOk && materialOk
 }
