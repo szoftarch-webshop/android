@@ -1,5 +1,6 @@
 package hu.szoftarch.webshop.feature.search
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -13,7 +14,9 @@ import hu.szoftarch.webshop.model.data.ProductRetrievalOptions
 import hu.szoftarch.webshop.model.repository.CartRepository
 import hu.szoftarch.webshop.model.repository.CategoryRepository
 import hu.szoftarch.webshop.model.repository.ProductRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -74,14 +77,25 @@ class SearchViewModel @Inject constructor(
         }.toMap()
     }
 
-    private suspend fun getMatchingProductsWithCountInCart(): Map<ProductItem, Int> {
-        val paginatedProducts = productRepository.getProducts(options)
-        val productIds = paginatedProducts.products.map { it.id }
-        val productCount = cartRepository.getProductCount(productIds)
-        return productCount.map { (id, count) ->
-            productRepository.getProductById(id) to count
-        }.toMap()
+    private suspend fun getMatchingProductsWithCountInCart(): Map<ProductItem, Int>
+    = withContext(Dispatchers.IO) {
+        try {
+            val paginatedProducts = productRepository.getProducts(options)
+
+            val productIds = paginatedProducts.products.map { it.id }
+            val productCount = cartRepository.getProductCount(productIds)
+
+            val products = paginatedProducts.products.associateBy { it.id }
+            val result = productCount.mapNotNull { (id, count) ->
+                products[id]?.let { product -> product to count }
+            }.toMap()
+            result
+        } catch (e: Exception) {
+            Log.e("ProductRepository", "Failed to fetch matching products with count in cart", e)
+            emptyMap()
+        }
     }
+
 
     private suspend fun updateProductItems(cartContent: CartContent, productId: Int) {
         productItems = productItems.toMutableMap().apply {
