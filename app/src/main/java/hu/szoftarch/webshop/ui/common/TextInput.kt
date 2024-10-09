@@ -1,6 +1,7 @@
 package hu.szoftarch.webshop.ui.common
 
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -14,6 +15,8 @@ import androidx.compose.ui.Modifier
 fun TextInput(
     selectedText: String,
     labelText: String,
+    isError: Boolean = false,
+    errorMessage: String = "",
     onValueChange: (String) -> Unit
 ) {
     var text by remember { mutableStateOf(selectedText) }
@@ -25,7 +28,14 @@ fun TextInput(
             text = it
             onValueChange(it)
         },
-        label = { Text(labelText) },
+        isError = isError,
+        label = {
+            if (isError && errorMessage.isNotEmpty()) {
+                Text(errorMessage, color = MaterialTheme.colorScheme.error)
+            } else {
+                Text(labelText)
+            }
+        },
         modifier = Modifier.fillMaxWidth()
     )
 }

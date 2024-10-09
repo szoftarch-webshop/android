@@ -55,9 +55,11 @@ fun NavGraph(
             composable(
                 route = NavigationItem.CART.route
             ) {
-                CartScreen(modifier = Modifier
-                    .fillMaxSize()
-                    .padding(padding))
+                CartScreen(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(padding)
+                )
             }
         }
     }

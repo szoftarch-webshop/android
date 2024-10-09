@@ -8,6 +8,7 @@ import android.graphics.BitmapFactory
 import android.graphics.Matrix
 import android.net.Uri
 import android.os.Environment
+import android.util.Log
 import androidx.activity.result.ActivityResultLauncher
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -72,12 +73,16 @@ class CameraViewModel @Inject constructor(
                 val bitmap = BitmapFactory.decodeStream(it)
                 picture = bitmap.rotateIfRequired(context, pictureUri!!)
                 val serialNumbers = serialNumberRecognitionService.getSerialNumbers(bitmap)
-                val recognizedProducts =
-                    serialNumbers.map { sn -> productRepository.getProductBySerialNumber(sn) }
-                productItems =
-                    cartRepository.getProductCount(recognizedProducts.map { product -> product.id })
-                        .map { (id, count) -> productRepository.getProductById(id) to count }
-                        .toMap()
+                try {
+                    val recognizedProducts =
+                        serialNumbers.map { sn -> productRepository.getProductBySerialNumber(sn) }
+                    productItems =
+                        cartRepository.getProductCount(recognizedProducts.map { product -> product.id })
+                            .map { (id, count) -> productRepository.getProductById(id) to count }
+                            .toMap()
+                } catch (e: NoSuchElementException) {
+                    Log.i("CameraViewModel", "No product found for serial numbers: $serialNumbers")
+                }
             }
         }
     }

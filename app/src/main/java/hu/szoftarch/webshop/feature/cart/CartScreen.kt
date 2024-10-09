@@ -40,7 +40,7 @@ import hu.szoftarch.webshop.ui.common.TextInput
 @Composable
 fun CartScreen(
     modifier: Modifier = Modifier,
-    cartViewModel: CartViewModel = hiltViewModel(),
+    cartViewModel: CartViewModel = hiltViewModel()
 ) {
     LaunchedEffect(Unit) {
         cartViewModel.load()
@@ -132,15 +132,36 @@ private fun CheckoutButton(
 }
 
 @Composable
-private fun CheckoutBottomSheetContent() {
+private fun CheckoutBottomSheetContent(customerInfoViewModel: CustomerInfoViewModel = hiltViewModel()) {
     val fields = listOf(
-        "Name",
-        "Zip Code",
-        "Country",
-        "City",
-        "Street",
-        "Phone Number",
-        "Email Address"
+        Triple(
+            "Name",
+            customerInfoViewModel.uiState.nameError
+        ) { it: String -> customerInfoViewModel.onNameChanged(it) },
+        Triple(
+            "Zip Code",
+            customerInfoViewModel.uiState.zipCodeError
+        ) { it: String -> customerInfoViewModel.onZipCodeChanged(it) },
+        Triple(
+            "Country",
+            customerInfoViewModel.uiState.countryError
+        ) { it: String -> customerInfoViewModel.onCountryChanged(it) },
+        Triple(
+            "City",
+            customerInfoViewModel.uiState.cityError
+        ) { it: String -> customerInfoViewModel.onCityChanged(it) },
+        Triple(
+            "Street",
+            customerInfoViewModel.uiState.streetError
+        ) { it: String -> customerInfoViewModel.onStreetChanged(it) },
+        Triple(
+            "Phone Number",
+            customerInfoViewModel.uiState.phoneNumberError
+        ) { it: String -> customerInfoViewModel.onPhoneNumberChanged(it) },
+        Triple(
+            "Email Address",
+            customerInfoViewModel.uiState.emailAddressError
+        ) { it: String -> customerInfoViewModel.onEmailAddressChanged(it) }
     )
 
     LazyColumn(
@@ -149,27 +170,39 @@ private fun CheckoutBottomSheetContent() {
             .padding(8.dp),
         contentPadding = PaddingValues(bottom = 16.dp)
     ) {
-        items(fields) { label ->
-            TextInputWithSpacer(label)
+        items(fields) { field ->
+            TextInputWithSpacer(
+                labelText = field.first,
+                isError = field.second != null,
+                errorMessage = field.second ?: "",
+                onValueChange = field.third
+            )
         }
 
         item {
             Spacer(modifier = Modifier.height(16.dp))
             ActionButtons(
                 onDismiss = { },
-                onPay = { }
+                onPay = { customerInfoViewModel.validate() }
             )
         }
     }
 }
 
 @Composable
-private fun TextInputWithSpacer(labelText: String) {
+private fun TextInputWithSpacer(
+    labelText: String,
+    isError: Boolean,
+    errorMessage: String = "",
+    onValueChange: (String) -> Unit
+) {
     Column {
         TextInput(
             labelText = labelText,
             selectedText = "",
-            onValueChange = { }
+            isError = isError,
+            errorMessage = errorMessage,
+            onValueChange = onValueChange
         )
         Spacer(modifier = Modifier.height(16.dp))
     }
