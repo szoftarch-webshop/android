@@ -30,7 +30,6 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -125,10 +124,10 @@ private fun FilterBottomSheetContent(
     ) {
         var nameOrSerialNumber by remember { mutableStateOf(options.searchString) }
         var material by remember { mutableStateOf(options.material) }
-        var selectedCategoryId by remember { mutableIntStateOf(options.categoryId) }
+        var selectedCategoryId by remember { mutableStateOf(options.categoryId) }
 
         TextInput(
-            selectedText = options.searchString,
+            selectedText = options.searchString ?: "",
             labelText = "Name or Serial Number",
             onValueChange = { nameOrSerialNumber = it }
         )
@@ -136,7 +135,7 @@ private fun FilterBottomSheetContent(
         Spacer(modifier = Modifier.height(16.dp))
 
         TextInput(
-            selectedText = options.material,
+            selectedText = options.material ?: "",
             labelText = "Material",
             onValueChange = { material = it }
         )
@@ -167,7 +166,7 @@ private fun FilterBottomSheetContent(
 @Composable
 private fun CategorySelector(
     categories: List<CategoryItem>,
-    selectedCategoryId: Int,
+    selectedCategoryId: Int?,
     onCategorySelected: (Int) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
@@ -183,7 +182,7 @@ private fun CategorySelector(
                 .menuAnchor(MenuAnchorType.PrimaryNotEditable)
                 .fillMaxWidth(),
             readOnly = true,
-            value = selectedCategory?.name ?: "",
+            value = selectedCategory?.name ?: "Select Category",
             onValueChange = {},
             label = { Text("Category") },
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },

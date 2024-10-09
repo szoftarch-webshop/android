@@ -84,7 +84,10 @@ dependencies {
     implementation(libs.jetbrains.kotlinx.coroutines.play.services)
 
     kapt(libs.hilt.android.compiler)
-    kapt(libs.moshi.kotlin.codegen)
+    implementation(libs.logging.interceptor)
+
+    implementation(libs.converter.gson)
+
 }
 
 kapt {
