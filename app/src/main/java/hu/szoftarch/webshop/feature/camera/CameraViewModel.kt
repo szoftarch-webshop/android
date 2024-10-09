@@ -87,20 +87,27 @@ class CameraViewModel @Inject constructor(
         }
     }
 
-    fun onAdd(productId: Int) = viewModelScope.launch {
-        val cart = cartRepository.addToCart(productId)
-        productItems = productItems.toMutableMap().apply {
-            val product = productRepository.getProductById(productId)
-            this[product] = cart.products[productId] ?: 0
+    fun onAdd(productId: Int): Boolean {
+        viewModelScope.launch {
+            val cart = cartRepository.addToCart(productId)
+
+            productItems = productItems.toMutableMap().apply {
+                val product = productRepository.getProductById(productId)
+                this[product] = cart.products[productId] ?: 0
+            }
         }
+        return true
     }
 
-    fun onRemove(productId: Int) = viewModelScope.launch {
-        val cart = cartRepository.removeFromCart(productId)
-        productItems = productItems.toMutableMap().apply {
-            val product = productRepository.getProductById(productId)
-            this[product] = cart.products[productId] ?: 0
+    fun onRemove(productId: Int): Boolean {
+        viewModelScope.launch {
+            val cart = cartRepository.removeFromCart(productId)
+            productItems = productItems.toMutableMap().apply {
+                val product = productRepository.getProductById(productId)
+                this[product] = cart.products[productId] ?: 0
+            }
         }
+        return true
     }
 }
 
