@@ -5,6 +5,7 @@ coilCompose = "2.5.0"
 converterGson = "2.11.0"
 composeBom = "2024.09.00"
 coreKtx = "1.13.1"
+coreSplashscreen = "1.0.1"
 espressoCore = "3.5.0"
 hiltAndroid = "2.51.1"
 hiltAndroidCompiler = "2.51.1"
@@ -27,6 +28,7 @@ visionCommon = "17.3.0"
 [libraries]
 # Core Android libraries
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "coreSplashscreen" }
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
 
 # Jetpack Compose libraries

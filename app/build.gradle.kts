@@ -106,6 +106,10 @@ dependencies {
     // Kapt (annotation processors)
     implementation(libs.logging.interceptor)
     kapt(libs.hilt.android.compiler)
+
+    // splash screen
+    implementation(libs.androidx.core.splashscreen)
+
 }
 
 kapt {
