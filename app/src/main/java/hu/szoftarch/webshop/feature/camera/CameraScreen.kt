@@ -30,6 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -123,6 +124,8 @@ private fun CameraContent(
     modifier: Modifier = Modifier,
     cameraViewModel: CameraViewModel
 ) {
+    val context = LocalContext.current
+
     LazyColumn(modifier = modifier) {
         item {
             cameraViewModel.picture?.let {
@@ -143,8 +146,12 @@ private fun CameraContent(
                 ProductCardWithAddRemove(
                     productItem = product,
                     productCount = count,
-                    onAdd = { cameraViewModel.onAdd(product.id) },
-                    onRemove = { cameraViewModel.onRemove(product.id) }
+                    onAdd = { productItem, quantity ->
+                        cameraViewModel.onAdd(context, productItem, quantity)
+                    },
+                    onRemove = { productItem, quantity ->
+                        cameraViewModel.onRemove(context, productItem, quantity)
+                    }
                 )
             }
         } else {
