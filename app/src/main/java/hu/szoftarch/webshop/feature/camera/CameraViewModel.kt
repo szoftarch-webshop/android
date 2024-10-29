@@ -20,6 +20,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import hu.szoftarch.webshop.feature.common.ProductManagementViewModel
+import hu.szoftarch.webshop.model.data.CartContent
 import hu.szoftarch.webshop.model.data.ProductItem
 import hu.szoftarch.webshop.model.repository.CartRepository
 import hu.szoftarch.webshop.model.repository.ProductRepository
@@ -34,16 +36,13 @@ class CameraViewModel @Inject constructor(
     private val serialNumberRecognitionService: SerialNumberRecognitionService,
     private val productRepository: ProductRepository,
     private val cartRepository: CartRepository
-) : ViewModel() {
+) : ProductManagementViewModel(cartRepository, productRepository) {
     var hasCameraPermission by mutableStateOf(
         ContextCompat.checkSelfPermission(
             context,
             Manifest.permission.CAMERA
         ) == PackageManager.PERMISSION_GRANTED
     )
-        private set
-
-    var productItems by mutableStateOf<Map<ProductItem, Int>>(mapOf())
         private set
 
     var picture by mutableStateOf<Bitmap?>(null)
@@ -85,29 +84,6 @@ class CameraViewModel @Inject constructor(
                 }
             }
         }
-    }
-
-    fun onAdd(productId: Int): Boolean {
-        viewModelScope.launch {
-            val cart = cartRepository.addToCart(productId)
-
-            productItems = productItems.toMutableMap().apply {
-                val product = productRepository.getProductById(productId)
-                this[product] = cart.products[productId] ?: 0
-            }
-        }
-        return true
-    }
-
-    fun onRemove(productId: Int): Boolean {
-        viewModelScope.launch {
-            val cart = cartRepository.removeFromCart(productId)
-            productItems = productItems.toMutableMap().apply {
-                val product = productRepository.getProductById(productId)
-                this[product] = cart.products[productId] ?: 0
-            }
-        }
-        return true
     }
 }
 

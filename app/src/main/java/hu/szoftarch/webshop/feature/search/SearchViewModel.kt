@@ -4,9 +4,9 @@ import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import hu.szoftarch.webshop.feature.common.ProductManagementViewModel
 import hu.szoftarch.webshop.model.data.CartContent
 import hu.szoftarch.webshop.model.data.CategoryItem
 import hu.szoftarch.webshop.model.data.ProductItem
@@ -24,9 +24,7 @@ class SearchViewModel @Inject constructor(
     private val cartRepository: CartRepository,
     private val categoryRepository: CategoryRepository,
     private val productRepository: ProductRepository
-) : ViewModel() {
-    var productItems by mutableStateOf<Map<ProductItem, Int>>(mapOf())
-        private set
+) : ProductManagementViewModel(cartRepository, productRepository) {
 
     var productCardState by mutableStateOf<Map<Int, Boolean>>(mapOf())
         private set
@@ -36,25 +34,15 @@ class SearchViewModel @Inject constructor(
 
     val availableCategories = mutableStateOf<List<CategoryItem>>(listOf())
 
+    private val productCache = mutableMapOf<Int, ProductItem>()
+
     fun load() = viewModelScope.launch {
         productItems = getMatchingProductsWithCountInCart()
         availableCategories.value = categoryRepository.getCategories()
     }
 
-    fun onAdd(productId: Int): Boolean {
-        viewModelScope.launch {
-            val cartContent = cartRepository.addToCart(productId)
-            updateProductItems(cartContent, productId)
-        }
-        return true
-    }
-
-    fun onRemove(productId: Int): Boolean {
-        viewModelScope.launch {
-            val cartContent = cartRepository.removeFromCart(productId)
-            updateProductItems(cartContent, productId)
-        }
-        return true
+    override fun getProductQuantity(product: ProductItem): Int {
+        return productItems[product] ?: 0
     }
 
     fun onApplyOptions(newOptions: ProductRetrievalOptions) = viewModelScope.launch {
@@ -97,10 +85,15 @@ class SearchViewModel @Inject constructor(
     }
 
 
-    private suspend fun updateProductItems(cartContent: CartContent, productId: Int) {
-        productItems = productItems.toMutableMap().apply {
-            val product = productRepository.getProductById(productId)
-            this[product] = cartContent.products[productId] ?: 0
+    override suspend fun updateProductItems(cartContent: CartContent, productId: Int){
+        val product = productCache[productId] ?: productRepository.getProductById(productId).also {
+            productCache[productId] = it
         }
+
+        val updatedQuantity = cartContent.products[productId] ?: 0
+
+        productItems = productItems.toMutableMap().apply {
+            this[product] = updatedQuantity
+        }.toMap()
     }
 }
