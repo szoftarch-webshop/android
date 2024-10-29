@@ -1,6 +1,8 @@
 package hu.szoftarch.webshop.ui.common
 
 import android.widget.Toast
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -12,11 +14,20 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import hu.szoftarch.webshop.feature.search.SearchViewModel
 import hu.szoftarch.webshop.model.data.ProductItem
 
 @Composable
@@ -25,10 +36,10 @@ fun ProductCardWithAddRemove(
     productCount: Int,
     expandedByDefault: Boolean = false,
     onExpansionChange: () -> Unit = {},
-    onAdd: (ProductItem) -> Boolean,
-    onRemove: (ProductItem) -> Boolean
+    onAdd: (ProductItem, Int) -> Unit,
+    onRemove: (ProductItem, Int) -> Unit
 ) {
-    val context = LocalContext.current
+    var quantity by remember { mutableStateOf(1) }
 
     ProductCard(productItem, expandedByDefault, onExpansionChange = onExpansionChange) {
         Text(text = productItem.description)
@@ -49,23 +60,38 @@ fun ProductCardWithAddRemove(
 
         Text(text = "Material: ${productItem.material}")
 
+        Spacer(modifier = Modifier.height(4.dp))
+
+        Text(text = "Categories: ${productItem.categoryNames.joinToString(", ")}")
+
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+            IconButton(
+                onClick = {
+                    if (quantity > 1) quantity--
+                },
+                modifier = Modifier.size(48.dp)
+            ) {
+                Icon(imageVector = Icons.Filled.Remove, contentDescription = "Decrease quantity")
+            }
+
+            Text(text = quantity.toString(), modifier = Modifier.align(Alignment.CenterVertically))
+
+            IconButton(
+                onClick = {
+                    if (quantity < productItem.stock) quantity++
+                },
+                modifier = Modifier.size(48.dp)
+            ) {
+                Icon(imageVector = Icons.Filled.Add, contentDescription = "Increase quantity")
+            }
+        }
+
+
         Button(
             onClick = {
-                val success = onAdd(productItem)
-                if (success) {
-                    Toast.makeText(
-                        context,
-                        "${productItem.name} added to cart",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                } else {
-                    Toast.makeText(
-                        context,
-                        "Could not add ${productItem.name} to cart",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-            }, modifier = Modifier
+               onAdd(productItem, quantity)
+            },
+            modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp)
         ) {
@@ -82,20 +108,7 @@ fun ProductCardWithAddRemove(
 
         Button(
             onClick = {
-                val success = onRemove(productItem)
-                if (success) {
-                    Toast.makeText(
-                        context,
-                        "${productItem.name} removed from cart",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                } else {
-                    Toast.makeText(
-                        context,
-                        "Could not remove ${productItem.name} remove cart",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
+                onRemove(productItem, quantity)
             },
             modifier = Modifier
                 .fillMaxWidth()
