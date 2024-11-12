@@ -36,6 +36,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import hu.szoftarch.webshop.model.data.CategoryItem
@@ -50,6 +51,7 @@ fun SearchScreen(
     modifier: Modifier = Modifier,
     searchViewModel: SearchViewModel = hiltViewModel()
 ) {
+    val context = LocalContext.current
     val sheetState = rememberModalBottomSheetState()
     val scope = rememberCoroutineScope()
     var showBottomSheet by remember { mutableStateOf(false) }
@@ -66,8 +68,12 @@ fun SearchScreen(
                     productCount = count,
                     expandedByDefault = searchViewModel.productCardState[product.id] ?: false,
                     onExpansionChange = { searchViewModel.onChangeProductCardState(product.id) },
-                    onAdd = { searchViewModel.onAdd(product.id) },
-                    onRemove = { searchViewModel.onRemove(product.id) }
+                    onAdd = { productItem, quantity ->
+                        searchViewModel.onAdd(context, productItem, quantity)
+                    },
+                    onRemove = { productItem, quantity->
+                        searchViewModel.onRemove(context, productItem, quantity)
+                    }
                 )
             }
 

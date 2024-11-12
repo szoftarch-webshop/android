@@ -13,6 +13,7 @@ import retrofit2.Retrofit
 import javax.inject.Singleton
 import retrofit2.converter.gson.GsonConverterFactory
 import hu.szoftarch.webshop.R
+import okhttp3.Dispatcher
 
 
 @Module
@@ -33,6 +34,7 @@ object NetworkModule {
         }
 
         return OkHttpClient.Builder()
+            .dispatcher(Dispatcher().apply { maxRequests = 64 })
             .addInterceptor(logging)
             .addInterceptor { chain ->
                 val request = chain.request()

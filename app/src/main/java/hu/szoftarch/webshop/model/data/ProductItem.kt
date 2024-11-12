@@ -15,5 +15,6 @@ data class ProductItem(
     val categoryNames: List<String> = emptyList(),
     val imageUrl: String = "https://picsum.photos/700/400"
 ) {
-    val priceHuf = "$price HUF"
+    val priceHuf: String
+        get() = "$price HUF"
 }

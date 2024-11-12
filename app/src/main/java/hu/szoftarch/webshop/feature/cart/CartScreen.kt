@@ -58,8 +58,12 @@ fun CartScreen(
                     productItem = product,
                     productCount = count,
                     expandedByDefault = true,
-                    onAdd = { cartViewModel.onAdd(product.id) },
-                    onRemove = { cartViewModel.onRemove(product.id) }
+                    onAdd = { productItem, quantity ->
+                        cartViewModel.onAdd(productItem.id, quantity)
+                    },
+                    onRemove = { productItem, quantity  ->
+                        cartViewModel.onRemove(productItem.id, quantity)
+                    }
                 )
             }
 
