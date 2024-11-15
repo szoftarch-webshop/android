@@ -1,5 +1,6 @@
 package hu.szoftarch.webshop.feature.cart
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -61,7 +62,10 @@ class CustomerInfoViewModel @Inject constructor(private val validationService: V
         uiState = uiState.copy(emailAddress = emailAddress)
     }
 
-    fun validate() = viewModelScope.launch {
+    var onPaymentRequest: ((CustomerInfo) -> Unit)? = null
+
+    fun validateAndRequestPayment() = viewModelScope.launch {
+        Log.i("CustomerInfoViewModel", "validateAndRequestPayment")
         val report = validationService.validateCustomerInfo(customerInfo())
         uiState = uiState.copy(
             nameError = report.nameError,
@@ -72,6 +76,11 @@ class CustomerInfoViewModel @Inject constructor(private val validationService: V
             phoneNumberError = report.phoneNumberError,
             emailAddressError = report.emailAddressError
         )
+
+        if (report.isValid()) {
+            Log.i("CustomerInfoViewModel", "report.isValid()")
+            onPaymentRequest?.invoke(customerInfo())
+        }
     }
 
     private fun customerInfo() = CustomerInfo(
@@ -83,4 +92,5 @@ class CustomerInfoViewModel @Inject constructor(private val validationService: V
         phoneNumber = uiState.phoneNumber,
         emailAddress = uiState.emailAddress
     )
+
 }

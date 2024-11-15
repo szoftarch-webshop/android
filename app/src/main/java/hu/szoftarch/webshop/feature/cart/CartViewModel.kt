@@ -1,5 +1,6 @@
 package hu.szoftarch.webshop.feature.cart
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -8,6 +9,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import hu.szoftarch.webshop.model.data.CartContent
+import hu.szoftarch.webshop.model.data.CartItem
+import hu.szoftarch.webshop.model.data.CustomerInfo
+import hu.szoftarch.webshop.model.data.PaymentDetails
 import hu.szoftarch.webshop.model.data.ProductItem
 import hu.szoftarch.webshop.model.repository.CartRepository
 import hu.szoftarch.webshop.model.repository.ProductRepository
@@ -51,4 +55,35 @@ class CartViewModel @Inject constructor(
                 .toMap()
         total = productItems.map { (product, count) -> product.price * count }.sum()
     }
+
+    fun initiatePaymentWithCustomerInfo(
+        customerInfo: CustomerInfo,
+        onSuccess: (String) -> Unit,
+        onError: (String) -> Unit
+    ) {
+        Log.i("CustomerInfoViewModel", "initiatePaymentWithCustomerInfo")
+        viewModelScope.launch {
+            try {
+                val paymentDetails = preparePaymentDetails(customerInfo)
+                val paymentUrl = paymentService.initiatePayment(paymentDetails)
+                onSuccess(paymentUrl)
+            } catch (e: Exception) {
+                onError(e.message ?: "Ismeretlen hiba történt.")
+            }
+        }
+    }
+
+    private fun preparePaymentDetails(customerInfo: CustomerInfo): PaymentDetails {
+        val cartItems = productItems.map { (product, quantity) ->
+            CartItem(productId = product.id, quantity = quantity)
+        }
+        Log.i("CustomerInfoViewModel", "preparePaymentDetails")
+        return PaymentDetails(
+            customerInfo = customerInfo, // Ügyfél adatok hozzáadása
+            cartItems = cartItems,
+            totalAmount = total
+        )
+    }
+
+
 }

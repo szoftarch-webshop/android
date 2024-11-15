@@ -2,6 +2,8 @@ package hu.szoftarch.webshop.model.api
 
 import hu.szoftarch.webshop.model.data.CategoryItem
 import hu.szoftarch.webshop.model.data.PaginatedProducts
+import hu.szoftarch.webshop.model.data.PaymentDetails
+import hu.szoftarch.webshop.model.data.PaymentResponse
 import hu.szoftarch.webshop.model.data.ProductItem
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -30,4 +32,6 @@ interface ApiService {
 
     @GET("Category")
     suspend fun getCategories(): List<CategoryItem>
+
+    suspend fun initiatePayment(paymentDetails: PaymentDetails): PaymentResponse
 }

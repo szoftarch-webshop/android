@@ -33,7 +33,9 @@ object ImplementationProviderModule {
     }
 
     @Provides
-    fun paymentService(): PaymentService = PaymentServiceMock
+    fun paymentService(apiService: ApiService): PaymentService {
+        return PaymentServiceMock
+    }
 
     @Provides
     fun validationService(): ValidationService = ValidationServiceImpl

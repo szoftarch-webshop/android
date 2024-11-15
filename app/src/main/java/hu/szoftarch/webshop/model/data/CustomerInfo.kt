@@ -24,4 +24,6 @@ data class CustomerInfoValidationReport(
             nameError, zipCodeError, countryError, cityError,
             streetError, phoneNumberError, emailAddressError
         ).any { it != null }
+
+    fun isValid() = !hasErrors
 }

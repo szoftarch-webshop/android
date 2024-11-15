@@ -1,5 +1,8 @@
 package hu.szoftarch.webshop.feature.cart
 
+import android.content.Intent
+import android.net.Uri
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -31,6 +34,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -40,10 +44,31 @@ import hu.szoftarch.webshop.ui.common.TextInput
 @Composable
 fun CartScreen(
     modifier: Modifier = Modifier,
-    cartViewModel: CartViewModel = hiltViewModel()
+    cartViewModel: CartViewModel = hiltViewModel(),
+    customerInfoViewModel: CustomerInfoViewModel = hiltViewModel()
 ) {
     LaunchedEffect(Unit) {
         cartViewModel.load()
+    }
+    val ctx = LocalContext.current
+    LaunchedEffect(Unit) {
+        customerInfoViewModel.onPaymentRequest = { customerInfo ->
+            cartViewModel.initiatePaymentWithCustomerInfo(
+                customerInfo,
+                onSuccess = { paymentUrl ->
+                    if (paymentUrl.isNotBlank() && paymentUrl.startsWith("http")) {
+                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(paymentUrl))
+                        ctx.startActivity(intent)
+                    }
+                    else{
+                        Toast.makeText(ctx, "Érvénytelen URL: $paymentUrl", Toast.LENGTH_LONG).show()
+                    }
+                },
+                onError = { errorMessage ->
+                    Toast.makeText(ctx, "Hiba: $errorMessage", Toast.LENGTH_LONG).show()
+                }
+            )
+        }
     }
 
     Box(
@@ -85,6 +110,7 @@ fun CartScreen(
         )
     }
 }
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -187,7 +213,9 @@ private fun CheckoutBottomSheetContent(customerInfoViewModel: CustomerInfoViewMo
             Spacer(modifier = Modifier.height(16.dp))
             ActionButtons(
                 onDismiss = { },
-                onPay = { customerInfoViewModel.validate() }
+                onPay = {
+                    customerInfoViewModel.validateAndRequestPayment()
+                }
             )
         }
     }
