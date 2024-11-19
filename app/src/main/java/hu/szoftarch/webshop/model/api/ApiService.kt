@@ -5,7 +5,10 @@ import hu.szoftarch.webshop.model.data.PaginatedProducts
 import hu.szoftarch.webshop.model.data.PaymentDetails
 import hu.szoftarch.webshop.model.data.PaymentResponse
 import hu.szoftarch.webshop.model.data.ProductItem
+import retrofit2.Response
+import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -33,5 +36,6 @@ interface ApiService {
     @GET("Category")
     suspend fun getCategories(): List<CategoryItem>
 
-    suspend fun initiatePayment(paymentDetails: PaymentDetails): PaymentResponse
+    @POST("Order/initiate-payment")
+    suspend fun initiatePayment(@Body paymentDetails: PaymentDetails): Response<PaymentResponse>
 }
