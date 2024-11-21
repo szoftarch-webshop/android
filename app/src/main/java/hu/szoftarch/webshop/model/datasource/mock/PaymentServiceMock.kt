@@ -1,5 +1,6 @@
 package hu.szoftarch.webshop.model.datasource.mock
 
+import android.net.Uri
 import android.util.Log
 import hu.szoftarch.webshop.model.data.PaymentDetails
 import hu.szoftarch.webshop.model.service.PaymentService
@@ -16,5 +17,13 @@ object PaymentServiceMock : PaymentService {
         }
 
         return "https://www.index.hu"
+    }
+
+    override suspend fun checkPaymentStatus(): String? {
+        TODO("Not yet implemented")
+    }
+
+    override fun setPaymentIdFromUri(uri: Uri?) {
+        TODO("Not yet implemented")
     }
 }
