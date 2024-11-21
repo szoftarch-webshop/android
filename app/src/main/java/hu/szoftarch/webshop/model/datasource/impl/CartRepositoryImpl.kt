@@ -34,4 +34,9 @@ object CartRepositoryImpl : CartRepository {
 
     override suspend fun getProductCount(productIds: List<Int>) =
         productIds.associateWith { (cartContent.products[it] ?: 0) }
+
+    override suspend fun clearCart(): CartContent {
+        cartContent = CartContent(products = mapOf())
+        return cartContent.copy()
+    }
 }
