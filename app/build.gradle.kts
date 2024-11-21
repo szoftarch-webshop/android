@@ -106,6 +106,10 @@ dependencies {
     // Kapt (annotation processors)
     implementation(libs.logging.interceptor)
     kapt(libs.hilt.android.compiler)
+
+    //lifecycle
+    implementation(libs.androidx.lifecycle.runtime.compose)
+
 }
 
 kapt {
