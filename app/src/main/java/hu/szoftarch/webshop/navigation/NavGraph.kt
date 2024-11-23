@@ -1,5 +1,7 @@
 package hu.szoftarch.webshop.navigation
 
+import android.net.Uri
+import android.util.Log
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -7,6 +9,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -22,8 +28,11 @@ import hu.szoftarch.webshop.ui.common.NavigationItem
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NavGraph(
-    navController: NavHostController = rememberNavController()
+    navController: NavHostController = rememberNavController(),
+    startingIntentUri: Uri?
 ) {
+    var currentUri: Uri? by remember { mutableStateOf(startingIntentUri) }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -43,7 +52,13 @@ fun NavGraph(
             composable(
                 route = NavigationItem.SEARCH.route
             ) {
-                SearchScreen(modifier = Modifier.padding(padding))
+                val uriForSearchScreen = currentUri
+                if (uriForSearchScreen != null) {
+                    SearchScreen(modifier = Modifier.padding(padding), startingIntentUri = uriForSearchScreen)
+                    currentUri = null
+                } else {
+                    SearchScreen(modifier = Modifier.padding(padding), startingIntentUri = null)
+                }
             }
 
             composable(
